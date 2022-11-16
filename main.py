@@ -1,4 +1,5 @@
 from attributes import vehicle
+from node import node
 
 # read input file and store data into data structure
 def readInput(input):
@@ -116,43 +117,281 @@ def defCar(board, unique, fuel):
     return cars # set of car objects
 
 cars = defCar(board, unique, fuel)
-# remeber posx has all the x values of the cars. posy has all the y values of the car, cars[0].posx[0] and cars[0].posy[0]
-# has the index of the first occurence of the car.
+
+# to get all possible moves
+# go through the cars object list
+def computeMoves(board, cars):
+    move = None
+    values ={}
+    for i in cars:
+        if i.orientation == 'horizontal':
+            if(i.length == 2):
+                if((i.posy[0]-1) >=0 and (board[i.posx[0]][i.posy[0]-1]=='.')):
+                    # swap board(x[0]y[0-1]) with i  and swap board(x[1]y[1] with '.'
+                    temp = board
+                    temp[i.posx[0]][i.posy[0] - 1] = i.letter
+                    temp[i.posx[1]][i.posy[1]] = '.'
+                    move ='l'+str(1)
+                    values[move]=temp
+                if((i.posy[0]-2) >=0 and (board[i.posx[0]][i.posy[0]-2]=='.') and (board[i.posx[0]][i.posy[0]-1]=='.')):
+                    #swap board(x[0]y[0-2] with i, board(x[0]y[0-1] with i, x0y0 with'.' and x1y1 with '.'
+                    temp = board
+                    temp[i.posx[0]][i.posy[0] - 2] = i.letter
+                    temp[i.posx[0]][i.posy[0] - 1] = i.letter
+                    temp[i.posx[0]][i.posy[0]] = '.'
+                    temp[i.posx[1]][i.posy[1]] = '.'
+                    move = 'l' + str(2)
+                    values[move] = temp
+                if ((i.posy[0] - 3) >= 0 and (board[i.posx[0]][i.posy[0] - 3] == '.')and (board[i.posx[0]][i.posy[0]-2]=='.') and (board[i.posx[0]][i.posy[0]-1]=='.')):
+                    #swap  board(x[0]y[0-3] with i board(x[0]y[0-2] with i, x0y0 with'.' and x1y1 with '.'
+                    temp = board
+                    temp[i.posx[0]][i.posy[0] - 2] = i.letter
+                    temp[i.posx[0]][i.posy[0] - 3] = i.letter
+                    temp[i.posx[0]][i.posy[0]] = '.'
+                    temp[i.posx[1]][i.posy[1]] = '.'
+                    move = 'l' + str(3)
+                    values[move] = temp
+                if ((i.posy[0] - 4) >= 0 and (board[i.posx[0]][i.posy[0] - 4] == '.')and (board[i.posx[0]][i.posy[0] - 3] == '.')and (board[i.posx[0]][i.posy[0]-2]=='.') and (board[i.posx[0]][i.posy[0]-1]=='.')):
+                    #swap  board(x[0]y[0-4] with i board(x[0]y[0-3] with i, x0y0 with'.' and x1y1 with '.'
+                    temp = board
+                    temp[i.posx[0]][i.posy[0] - 4] = i.letter
+                    temp[i.posx[0]][i.posy[0] - 3] = i.letter
+                    temp[i.posx[0]][i.posy[0]] = '.'
+                    temp[i.posx[1]][i.posy[1]] = '.'
+                    move = 'l' + str(4)
+                    values[move] = temp
+                if((i.posy[1]+1) <=5 and (board[i.posx[1]][i.posy[1]+1]=='.')):
+                    #swap board(x[0]y[0=1]) with i  and swap board(x[0]y[0] with '.'
+                    temp = board
+                    temp[i.posx[0]][i.posy[0] + 1] = i.letter
+                    temp[i.posx[0]][i.posy[0]] = '.'
+                    move = 'r' + str(1)
+                    values[move] = temp
+                if((i.posy[1]+2) <=5 and (board[i.posx[1]][i.posy[1]+2] == '.') and (board[i.posx[1]][i.posy[1]+1]=='.')):
+                    #swap board(x[0]y[0+2] with i, board(x[0]y[0=1] with i, x0y0 with'.' and x1y1 with '.'
+                    temp = board
+                    temp[i.posx[0]][i.posy[0] + 2] = i.letter
+                    temp[i.posx[0]][i.posy[0] + 1] = i.letter
+                    temp[i.posx[0]][i.posy[0]] = '.'
+                    temp[i.posx[1]][i.posy[1]] = '.'
+                    move = 'r' + str(2)
+                    values[move] = temp
+                if ((i.posy[1] + 3) <= 5 and (board[i.posx[1]][i.posy[1] + 3] == '.')and (board[i.posx[1]][i.posy[1]+2] == '.') and (board[i.posx[1]][i.posy[1]+1]=='.')):
+                    #swap  board(x[0]y[0+3] with i board(x[0]y[0+2] with i, x0y0 with'.' and x1y1 with '.'
+                    temp = board
+                    temp[i.posx[0]][i.posy[0] + 2] = i.letter
+                    temp[i.posx[0]][i.posy[0] + 3] = i.letter
+                    temp[i.posx[0]][i.posy[0]] = '.'
+                    temp[i.posx[1]][i.posy[1]] = '.'
+                    move = 'r' + str(3)
+                    values[move] = temp
+                if ((i.posy[1] + 4) <= 5 and (board[i.posx[1]][i.posy[1] + 4] == '.')and (board[i.posx[1]][i.posy[1] + 3] == '.')and (board[i.posx[1]][i.posy[1]+2] == '.') and (board[i.posx[1]][i.posy[1]+1]=='.')):
+                    #swap  board(x[0]y[0+4] with i board(x[0]y[0+3] with i, x0y0 with'.' and x1y1 with '.'
+                    temp = board
+                    temp[i.posx[0]][i.posy[0] + 4] = i.letter
+                    temp[i.posx[0]][i.posy[0] + 3] = i.letter
+                    temp[i.posx[0]][i.posy[0]] = '.'
+                    temp[i.posx[1]][i.posy[1]] = '.'
+                    move = 'r' + str(4)
+                    values[move] = temp
 
 
-def setNode(s, p, m, d, f):
-    return node(s, p, m, d, f)
+            if(i.length==3):
+                if ((i.posy[0] - 1) >= 0 and (board[i.posx[0] ][i.posy[0]-1] == '.')):
+                    # swap board(x[0]y[0-1]) with i  and swap board(x[2]y[2] with '.'
+                    temp = board
+                    temp[i.posx[0]][i.posy[0] - 1] = i.letter
+                    temp[i.posx[2]][i.posy[2]] = '.'
+                    move = 'l' + str(1)+str(3)
+                    values[move] = temp
+                if ((i.posy[0] - 2) >= 0 and (board[i.posx[0] ][i.posy[0]-2] == '.')and (board[i.posx[0] ][i.posy[0]-1] == '.')):
+                    #swap board(x[0]y[0-2] with i, board(x[0]y[0-1] with i, x1y1 with'.' and x2y2 with '.'
+                    temp = board
+                    temp[i.posx[0]][i.posy[0] -2] = i.letter
+                    temp[i.posx[0]][i.posy[0] - 1] = i.letter
+                    temp[i.posx[1]][i.posy[1]] = '.'
+                    temp[i.posx[2]][i.posy[2]] = '.'
+                    move = 'l' + str(2)+str(3)
+                    values[move] =temp
+                if ((i.posy[0] - 3) >= 0 and (board[i.posx[0] ][i.posy[0]-3] == '.')and (board[i.posx[0] ][i.posy[0]-2] == '.')and (board[i.posx[0] ][i.posy[0]-1] == '.')):
+                    #swap  board(x[0]y[0-3] with i board(x[0]y[0-2] with i board(x[0]y[0-1] with i, x0y0 with'.' and x1y1 with '.' x2y2 with '.'
+                    temp = board
+                    temp[i.posx[0]][i.posy[0] - 3] = i.letter
+                    temp[i.posx[0]][i.posy[0] - 2] = i.letter
+                    temp[i.posx[0]][i.posy[0] - 1] = i.letter
+                    temp[i.posx[0]][i.posy[0]] = '.'
+                    temp[i.posx[1]][i.posy[1]] = '.'
+                    temp[i.posx[2]][i.posy[2]] = '.'
+                    move = 'l' + str(3)+str(3)
+                    values[move] = temp
+                if ((i.posy[2] + 1) <=5 and (board[i.posx[2] ][i.posy[2]+1] == '.')):
+                    # swap board(x[0]y[0+1]) with i  and swap board(x[0]y[0] with '.'
+                    temp = board
+                    temp[i.posx[0]][i.posy[0] + 1] = i.letter
+                    temp[i.posx[0]][i.posy[0]] = '.'
+                    move = 'r' + str(1)+str(3)
+                    values[move] = temp
+                if ((i.posy[2] + 2) <=5 and (board[i.posx[2] ][i.posy[2]+2] == '.')and (board[i.posx[1] ][i.posy[1]+1] == '.')):
+                    #swap board(x[0]y[0+2] with i, board(x[0]y[0+1] with i, x0y0 with'.' and x1y1 with '.'
+                    temp = board
+                    temp[i.posx[0]][i.posy[0] + 2] = i.letter
+                    temp[i.posx[0]][i.posy[0] + 1] = i.letter
+                    temp[i.posx[0]][i.posy[0]] = '.'
+                    temp[i.posx[1]][i.posy[1]] = '.'
+                    move = 'r' + str(2)+str(3)
+                    values[move] = temp
+                if ((i.posy[2] + 3) <=5 and (board[i.posx[2] ][i.posy[2]+3] == '.')and (board[i.posx[1] ][i.posy[1]+2] == '.')and (board[i.posx[1] ][i.posy[1]+1] == '.')):
+                    #swap  board(x[0]y[0+3] with i board(x[0]y[0+2] with i board(x[0]y[0+1] with i, x0y0 with'.' and x1y1 with '.' x2y2 with '.'
+                    temp = board
+                    temp[i.posx[0]][i.posy[0] + 3] = i.letter
+                    temp[i.posx[0]][i.posy[0] + 2] = i.letter
+                    temp[i.posx[0]][i.posy[0] + 1] = i.letter
+                    temp[i.posx[0]][i.posy[0]] = '.'
+                    temp[i.posx[1]][i.posy[1]] = '.'
+                    temp[i.posx[2]][i.posy[2]] = '.'
+                    move = 'r' + str(3)+str(3)
+                    values[move] = temp
 
-class node:
-    def __init__(self, state, previous, move, level, cost):
-        self.state = state # the state of this node
-        self.parent = previous # parent or non
-        self.operator = move #move that got this node
-        self.level = level # what level 0,1,2,....
-        self.cost = cost
+        else:
+            if (i.length == 2):
+                if ((i.posx[0] - 1) >= 0 and (board[i.posx[0]-1][i.posy[0] ] == '.')):
+                    # swap board(x[0-1]y[0]) with i  and swap board(x[1]y[1] with '.'
+                    temp = board
+                    temp[i.posx[0]-1][i.posy[0]] = i.letter
+                    temp[i.posx[1]][i.posy[1]] = '.'
+                    move = 'u' + str(1)
+                    values[move] = temp
+                if ((i.posx[0] - 2) >= 0 and (board[i.posx[0]-2][i.posy[0]] == '.')and (board[i.posx[0]-1][i.posy[0] ] == '.')):
+                    #swap board(x[0-2]y[0] with i, board(x[0-1]y[0] with i, x0y0 with'.' and x1y1 with '.'
+                    temp = board
+                    temp[i.posx[0] - 2][i.posy[0]] = i.letter
+                    temp[i.posx[0] - 1][i.posy[0]] = i.letter
+                    temp[i.posx[1]][i.posy[1]] = '.'
+                    temp[i.posx[0]][i.posy[0]] = '.'
+                    move = 'u' + str(2)
+                    values[move] = temp
+                if ((i.posx[0] - 3) >= 0 and (board[i.posx[0]-3][i.posy[0] ] == '.')and (board[i.posx[0]-2][i.posy[0]] == '.')and (board[i.posx[0]-1][i.posy[0] ] == '.')):
+                    #swap  board(x[0-3]y[0] with i board(x[0-2]y[0] with i, x0y0 with'.' and x1y1 with '.'
+                    temp = board
+                    temp[i.posx[0] - 2][i.posy[0]] = i.letter
+                    temp[i.posx[0] - 3][i.posy[0]] = i.letter
+                    temp[i.posx[1]][i.posy[1]] = '.'
+                    temp[i.posx[0]][i.posy[0]] = '.'
+                    move = 'u' + str(3)
+                    values[move] = temp
+                if ((i.posx[0] - 4) >= 0 and (board[i.posx[0]-4][i.posy[0] ] == '.')and (board[i.posx[0]-3][i.posy[0] ] == '.')and (board[i.posx[0]-2][i.posy[0]] == '.')and (board[i.posx[0]-1][i.posy[0] ] == '.')):
+                    #swap  board(x[0-4]y[0] with i board(x[0-3]y[0] with i, x0y0 with'.' and x1y1 with '.'
+                    temp = board
+                    temp[i.posx[0] - 4][i.posy[0]] = i.letter
+                    temp[i.posx[0] - 3][i.posy[0]] = i.letter
+                    temp[i.posx[1]][i.posy[1]] = '.'
+                    temp[i.posx[0]][i.posy[0]] = '.'
+                    move = 'u' + str(2)
+                    values[move] =temp
+                if ((i.posx[1] + 1) <= 5 and (board[i.posx[1]+1][i.posy[1] ] == '.')):
+                    ##swap board(x[0+1]y[0]) with i  and swap board(x[0]y[0] with '.'
+                    temp = board
+                    temp[i.posx[0] + 1][i.posy[0]] = i.letter
+                    temp[i.posx[0]][i.posy[0]] = '.'
+                    move = 'd' + str(1)
+                    values[move] = temp
+                if ((i.posx[1] + 2) <= 5 and (board[i.posx[1]+2][i.posy[1] ] == '.')and (board[i.posx[1]+1][i.posy[1] ] == '.')):
+                    # swap board(x[0+2]y[0] with i, board(x[0]y[0+1] with i, x0y0 with'.' and x1y1 with '.'
+                    temp = board
+                    temp[i.posx[0] + 2][i.posy[0]] = i.letter
+                    temp[i.posx[0] + 1][i.posy[0]] = i.letter
+                    temp[i.posx[0]][i.posy[0]] = '.'
+                    temp[i.posx[1]][i.posy[1]] = '.'
+                    move = 'd' + str(2)
+                    values[move] = temp
+                if ((i.posx[1] + 3) <= 5 and (board[i.posx[1]+3][i.posy[1] ] == '.')and (board[i.posx[1]+2][i.posy[1] ] == '.')and (board[i.posx[1]+1][i.posy[1] ] == '.')):
+                    #swap  board(x[0+3]y[0] with i board(x[0+2]y[0] with i, x0y0 with'.' and x1y1 with '.'
+                    temp = board
+                    temp[i.posx[0] + 2][i.posy[0]] = i.letter
+                    temp[i.posx[0] + 3][i.posy[0]] = i.letter
+                    temp[i.posx[0]][i.posy[0]] = '.'
+                    temp[i.posx[1]][i.posy[1]] = '.'
+                    move = 'd' + str(3)
+                    values[move] = temp
+                if ((i.posx[1] + 4) <= 5 and (board[i.posx[1]+4][i.posy[1] ] == '.')and (board[i.posx[1]+3][i.posy[1] ] == '.')and (board[i.posx[1]+2][i.posy[1] ] == '.')and (board[i.posx[1]+1][i.posy[1] ] == '.')):
+                    # swap  board(x[0+4]y[0] with i board(x[0+3]y[0] with i, x0y0 with'.' and x1y1 with '.'
+                    temp = board
+                    temp[i.posx[0] + 4][i.posy[0]] = i.letter
+                    temp[i.posx[0] + 3][i.posy[0]] = i.letter
+                    temp[i.posx[0]][i.posy[0]] = '.'
+                    temp[i.posx[1]][i.posy[1]] = '.'
+                    move = 'd' + str(4)
+                    values[move] = temp
+
+            if (i.length == 3):
+                if ((i.posx[0] - 1) >= 0 and (board[i.posx[0]-1][i.posy[0]] == '.')):
+                    # swap board(x[0-1]y[0]) with i  and swap board(x[2]y[2] with '.'
+                    temp = board
+                    temp[i.posx[0] - 1][i.posy[0]] = i.letter
+                    temp[i.posx[2]][i.posy[2]] = '.'
+                    move = 'u' + str(1)+str(3)
+                    values[move] = temp
+                if ((i.posx[0] - 2) >= 0 and (board[i.posx[0]-2][i.posy[0] ] == '.')and (board[i.posx[0]-1][i.posy[0]] == '.')):
+                    #swap board(x[0-2]y[0] with i, board(x[0-1]y[0] with i, x1y1 with'.' and x2y2 with '.'
+                    temp = board
+                    temp[i.posx[0] - 2][i.posy[0]] = i.letter
+                    temp[i.posx[0] - 1][i.posy[0]] = i.letter
+                    temp[i.posx[2]][i.posy[2]] = '.'
+                    temp[i.posx[1]][i.posy[1]] = '.'
+                    move = 'u' + str(2)+str(3)
+                    values[move] = temp
+                if ((i.posx[0] - 3) >= 0 and (board[i.posx[0]-3][i.posy[0] ] == '.')and (board[i.posx[0]-2][i.posy[0] ] == '.')and (board[i.posx[0]-1][i.posy[0]] == '.')):
+                    # swap  board(x[0-3]y[0] with i board(x[0-2]y[0] with i board(x[0-1]y[0] with i, x0y0 with'.' and x1y1 with '.' x2y2 with '.'
+                    temp = board
+                    temp[i.posx[0] - 1][i.posy[0]] = i.letter
+                    temp[i.posx[0] - 2][i.posy[0]] = i.letter
+                    temp[i.posx[0] - 3][i.posy[0]] = i.letter
+                    temp[i.posx[2]][i.posy[2]] = '.'
+                    temp[i.posx[1]][i.posy[1]] = '.'
+                    temp[i.posx[0]][i.posy[0]] = '.'
+                    move = 'u' + str(3)+str(3)
+                    values[move] = temp
+                if ((i.posx[2] + 1) <=5 and (board[i.posx[2]+1][i.posy[2] ] == '.')):
+                    # swap board(x[2+1]y[0]) with i  and swap board(x[0]y[0] with '.'
+                    temp = board
+                    temp[i.posx[0] + 1][i.posy[0]] = i.letter
+                    temp[i.posx[0]][i.posy[0]] = '.'
+                    move = 'd' + str(1)+str(3)
+                    values[move] = temp
+                if ((i.posx[2] + 2) <=5 and (board[i.posx[2]+2][i.posy[2] ] == '.')and (board[i.posx[2]+1][i.posy[2] ] == '.')):
+                    #swap board(x[2+2]y[0] with i, board(x[2+1]y[0] with i, x0y0 with'.' and x1y1 with '.'
+                    temp = board
+                    temp[i.posx[0] + 1][i.posy[0]] = i.letter
+                    temp[i.posx[0] + 2][i.posy[0]] = i.letter
+                    temp[i.posx[0]][i.posy[0]] = '.'
+                    temp[i.posx[1]][i.posy[1]] = '.'
+                    move = 'd' + str(2)+str(3)
+                    values[move] = temp
+                if ((i.posx[2] + 3) <=5 and (board[i.posx[2]+3][i.posy[2] ] == '.')and (board[i.posx[2]+2][i.posy[2] ] == '.')and (board[i.posx[2]+1][i.posy[2] ] == '.')):
+                    #swap  board(x[2+3]y[0] with i board(x[2+2]y[0] with i board(x[2+1]y[0] with i, x0y0 with'.' and x1y1 with '.' x2y2 with '.'
+                    temp = board
+                    temp[i.posx[0] + 1][i.posy[0]] = i.letter
+                    temp[i.posx[0] + 2][i.posy[0]] = i.letter
+                    temp[i.posx[0] + 3][i.posy[0]] = i.letter
+                    temp[i.posx[0]][i.posy[0]] = '.'
+                    temp[i.posx[1]][i.posy[1]] = '.'
+                    temp[i.posx[2]][i.posy[2]] = '.'
+                    move = 'd' + str(3)+str(3)
+                    values[move] = temp
+
+        return values
+
+print(computeMoves(board, cars))
 
 
-
-
-def nextNode(stateArray):
-    nextLevel =[]
-    # all moves up, down, right, left, add to nextLevel as new point
-    #ups = checkUps(stateArray)
-    return nextLevel
-
-
-def ucs(start, fuel):
-    # take start state, find all possible new states
-    # done by checking all possible moves in entire board
-    # take all those moves one by one, each state, find all other new possible moves (keep track of visited nodes)
-    # keep doing till AA reaches 3,6 (matrix) or
-    inital = setNode(list(arrayPuzzle[int(puzzleNumber) - 1][0:36]), None, None, 0, fuel)
+def ucs(startboard, cars, fuel):
+    inital = node.setNode(list(arrayPuzzle[int(puzzleNumber) - 1][0:36]), None, None, 0, fuel)
     sol=[]
     searPath=[]
     sol.append(inital)
     present =  sol.pop(0)
     while(inital.state[17] != 'A' and inital.state[16] != 'A') :
-        next_nodes = nextNode(present) #need a fucntion to get a list of next level nodes
+        next_nodes = computeMoves(present) #need a fucntion to get a list of next level nodes
         for i in next_nodes:
             i.level = inital.level+i.level
             sol.append(i)
@@ -165,3 +404,4 @@ def ucs(start, fuel):
 
     return searPath
 
+#format the output from ucs as required

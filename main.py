@@ -195,16 +195,16 @@ def computeMove(board, fuel, checkerList): #board has the current nodes board, f
                         boardList.append(temp)
                         movelist.append(move)
                         fuelList.append(tempFuel) 
-                elif((i.length==3) and (i.posy[1]+j)<=5 and (board[i.posx[1]][i.posy[1]+j]=='.')  and check==False):
+                elif((i.length==3) and (i.posy[2]+j)<=5 and (board[i.posx[2]][i.posy[2]+j]=='.')  and check==False):
                     temp = copy.deepcopy(board)
                     for k in range(j-1,j+1):
-                        temp[i.posx[1]][i.posy[1] + k] = i.letter
+                        temp[i.posx[2]][i.posy[2] + k] = i.letter
                     temp[i.posx[0]][i.posy[0]] = '.'
                     if(j>1):
                         temp[i.posx[1]][i.posy[1]] = '.'
                         if(j>2):
                             temp[i.posx[2]][i.posy[2]] = '.'
-                            temp[i.posx[0]][i.posy[0] + 1] = i.letter
+                            temp[i.posx[2]][i.posy[2] + 1] = i.letter
                     move =str(i.letter)+'r'+str(j)
                     tempFuel = copy.deepcopy(fuel)
                     fl = int(tempFuel[f'{i.letter}']-j)
@@ -284,13 +284,13 @@ def computeMove(board, fuel, checkerList): #board has the current nodes board, f
                 elif((i.length==3) and (i.posx[2]+j)<=5 and (board[i.posx[2]+j][i.posy[2]]=='.')  and check==False):
                     temp = copy.deepcopy(board)
                     for k in range(j-1,j+1):
-                        temp[i.posx[1]+k][i.posy[1] ] = i.letter
+                        temp[i.posx[2]+k][i.posy[2] ] = i.letter
                     temp[i.posx[0]][i.posy[0]] = '.'
                     if(j>1):
                         temp[i.posx[1]][i.posy[1]] = '.'
                         if(j>2):
                             temp[i.posx[2]][i.posy[2]] = '.'
-                            temp[i.posx[0]+1][i.posy[0]] = i.letter
+                            temp[i.posx[2]+1][i.posy[2]] = i.letter
                     move =str(i.letter)+'d'+str(j)
                     tempFuel = copy.deepcopy(fuel)
                     fl = int(tempFuel[f'{i.letter}']-j)

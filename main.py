@@ -98,13 +98,12 @@ def orientation(board,i):
 board = boardMatrix(arrayPuzzle[int(puzzleNumber)-1][0:36])
 
 #get all the car atrributes
-def defCar(board, unique, fuel):
+def defCar(board, unique):
     cars=[] #hold object os cars
     for i in unique:
         # id, posx, posy, length, ori, fuel
         id = i
         length = sum(length.count(f'{i}') for length in board)
-        gas = fuel[f'{i}']
         intermediary = a = [[0]*1]*1
         posx=[]
         posy=[]
@@ -114,353 +113,241 @@ def defCar(board, unique, fuel):
                     posx.append(k)
                     posy.append(j)
         orient = orientation(board, i)
-        obj = vehicle.setVechicle(i,posx, posy, length, orient, gas)
+        obj = vehicle.setVechicle(i,posx, posy, length, orient)
         cars.append(obj)
     return cars # set of car objects
 
-# to get all possible moves
-# go through the cars object list
-def computeMoves(board,fuel):
-    move = None
-    values ={}
-    cars = defCar(board, unique, fuel)
-    fuelR= []
-    for i in cars:
-        if(fuel[f'{i.letter}']>0):
-            if i.orientation == 'horizontal':
-                if(i.length == 2 ):
-                    if((i.posy[0]-1) >=0 and (board[i.posx[0]][i.posy[0]-1]=='.')):
-                        # swap board(x[0]y[0-1]) with i  and swap board(x[1]y[1] with '.'
-                        temp = copy.deepcopy(board)
-                        temp[i.posx[0]][i.posy[0] - 1] = i.letter
-                        temp[i.posx[1]][i.posy[1]] = '.'
-                        move =str(i.letter)+'l'+str(1)
-                        values[move]=temp
-                        fuel = fuel[f'{i.letter}']
-                        fuel[f'{i.letter}'] = fuel -1
-                    if((i.posy[0]-2) >=0 and (board[i.posx[0]][i.posy[0]-2]=='.') and (board[i.posx[0]][i.posy[0]-1]=='.')):
-                        #swap board(x[0]y[0-2] with i, board(x[0]y[0-1] with i, x0y0 with'.' and x1y1 with '.'
-                        temp = copy.deepcopy(board)
-                        temp[i.posx[0]][i.posy[0] - 2] = i.letter
-                        temp[i.posx[0]][i.posy[0] - 1] = i.letter
+def computeMove(board, fuel, checkerList): #board has the current nodes board, fuel has the current nodes fuel, checkerList has all the nodes visited
+    boards=[]#contains all the boards that have already been passed
+    for i in checkerList:
+        boards.append(i.board)
+    boardList = [] 
+    movelist = [] 
+    fuelList= [] 
+    carlist = defCar(board, unique) #this list has all the cars for the given board
+
+    # give the board, get the car
+    #consider boards visited, fuel
+    #length 2
+    #all left possible moves 
+    for i in carlist:
+        if( fuel[f'{i.letter}'] >0  and i.orientation=='horizontal'):
+            #for loop 1 to 4, check if for
+            check=False
+            for j in range (1,5):
+                if((i.length==2) and (i.posy[0]-j)>=0 and (board[i.posx[0]][i.posy[0]-j]=='.')  and check==False):
+                    temp = copy.deepcopy(board)
+                    for k in range(j-1,j+1):
+                        temp[i.posx[0]][i.posy[0] - k] = i.letter
+                    temp[i.posx[1]][i.posy[1]] = '.'
+                    if(j>1):
                         temp[i.posx[0]][i.posy[0]] = '.'
+                    move =str(i.letter)+'l'+str(j)
+                    tempFuel = copy.deepcopy(fuel)
+                    fl = int(tempFuel[f'{i.letter}']-j)
+                    tempFuel[f'{i.letter}'] = fl 
+                    #add the moves, fuel, board for each different moves
+                    if(temp in boards)==False:
+                        boardList.append(temp)
+                        movelist.append(move)
+                        fuelList.append(tempFuel) 
+                elif((i.length==3) and (i.posy[0]-j)>=0 and (board[i.posx[0]][i.posy[0]-j]=='.')  and check==False):
+                    temp = copy.deepcopy(board)
+                    for k in range(j-1,j+1):
+                        temp[i.posx[0]][i.posy[0] - k] = i.letter
+                    temp[i.posx[2]][i.posy[2]] = '.'
+                    if(j>1):
                         temp[i.posx[1]][i.posy[1]] = '.'
-                        move = str(i.letter)+'l' + str(2)
-                        values[move] = temp
-                        fuel = fuel[f'{i.letter}']
-                        fuel[f'{i.letter}'] = fuel - 2
-                    if ((i.posy[0] - 3) >= 0 and (board[i.posx[0]][i.posy[0] - 3] == '.')and (board[i.posx[0]][i.posy[0]-2]=='.') and (board[i.posx[0]][i.posy[0]-1]=='.')):
-                        #swap  board(x[0]y[0-3] with i board(x[0]y[0-2] with i, x0y0 with'.' and x1y1 with '.'
-                        temp = copy.deepcopy(board)
-                        temp[i.posx[0]][i.posy[0] - 2] = i.letter
-                        temp[i.posx[0]][i.posy[0] - 3] = i.letter
-                        temp[i.posx[0]][i.posy[0]] = '.'
+                        if(j>2):
+                            temp[i.posx[0]][i.posy[0]] = '.'
+                            temp[i.posx[0]][i.posy[0] - 1] = i.letter
+                    move =str(i.letter)+'l'+str(j)
+                    tempFuel = copy.deepcopy(fuel)
+                    fl = int(tempFuel[f'{i.letter}']-j)
+                    tempFuel[f'{i.letter}'] = fl 
+                    #add the moves, fuel, board for each different moves
+                    if(temp in boards)==False:
+                        boardList.append(temp)
+                        movelist.append(move)
+                        fuelList.append(tempFuel) 
+                else:
+                    check=True
+                
+
+    #all ritgh possible moves 
+    for i in carlist:
+        if(fuel[f'{i.letter}'] >0  and i.orientation=='horizontal'):
+            check=False
+            for j in range (1,5):
+                if((i.length==2) and (i.posy[1]+j)<=5 and (board[i.posx[1]][i.posy[1]+j]=='.')  and check==False):
+                    temp = copy.deepcopy(board)
+                    for k in range(j-1,j+1):
+                        temp[i.posx[1]][i.posy[1] + k] = i.letter
+                    temp[i.posx[0]][i.posy[0]] = '.'
+                    if(j>1):
                         temp[i.posx[1]][i.posy[1]] = '.'
-                        move = str(i.letter)+'l' + str(3)
-                        values[move] = temp
-                        fuel = fuel[f'{i.letter}']
-                        fuel[f'{i.letter}'] = fuel - 3
-                    if ((i.posy[0] - 4) >= 0 and (board[i.posx[0]][i.posy[0] - 4] == '.')and (board[i.posx[0]][i.posy[0] - 3] == '.')and (board[i.posx[0]][i.posy[0]-2]=='.') and (board[i.posx[0]][i.posy[0]-1]=='.')):
-                        #swap  board(x[0]y[0-4] with i board(x[0]y[0-3] with i, x0y0 with'.' and x1y1 with '.'
-                        temp = copy.deepcopy(board)
-                        temp[i.posx[0]][i.posy[0] - 4] = i.letter
-                        temp[i.posx[0]][i.posy[0] - 3] = i.letter
-                        temp[i.posx[0]][i.posy[0]] = '.'
+                    move =str(i.letter)+'r'+str(j)
+                    tempFuel = copy.deepcopy(fuel)
+                    fl = int(tempFuel[f'{i.letter}']-j)
+                    tempFuel[f'{i.letter}'] = fl 
+                    #add the moves, fuel, board for each different moves
+                    if(temp in boards)==False:
+                        boardList.append(temp)
+                        movelist.append(move)
+                        fuelList.append(tempFuel) 
+                elif((i.length==3) and (i.posy[1]+j)<=5 and (board[i.posx[1]][i.posy[1]+j]=='.')  and check==False):
+                    temp = copy.deepcopy(board)
+                    for k in range(j-1,j+1):
+                        temp[i.posx[1]][i.posy[1] + k] = i.letter
+                    temp[i.posx[0]][i.posy[0]] = '.'
+                    if(j>1):
                         temp[i.posx[1]][i.posy[1]] = '.'
-                        move = str(i.letter)+'l' + str(4)
-                        values[move] = temp
-                        fuel = fuel[f'{i.letter}']
-                        fuel[f'{i.letter}'] = fuel - 4
-                    if((i.posy[1]+1) <=5 and (board[i.posx[1]][i.posy[1]+1]=='.')):
-                        #swap board(x[0]y[0=1]) with i  and swap board(x[0]y[0] with '.'
-                        temp = copy.deepcopy(board)
-                        temp[i.posx[1]][i.posy[1] + 1] = i.letter
+                        if(j>2):
+                            temp[i.posx[2]][i.posy[2]] = '.'
+                            temp[i.posx[0]][i.posy[0] + 1] = i.letter
+                    move =str(i.letter)+'r'+str(j)
+                    tempFuel = copy.deepcopy(fuel)
+                    fl = int(tempFuel[f'{i.letter}']-j)
+                    tempFuel[f'{i.letter}'] = fl 
+                    #add the moves, fuel, board for each different moves
+                    if(temp in boards)==False:
+                        boardList.append(temp)
+                        movelist.append(move)
+                        fuelList.append(tempFuel) 
+                else:
+                    check=True
+
+    #all up possible moves 
+    for i in carlist:
+        if( fuel[f'{i.letter}'] > 0  and i.orientation=='vertical'):
+            check=False
+            for j in range (1,5):
+                if((i.length==2) and(i.posx[0]-j)>=0 and (board[i.posx[0]-j][i.posy[0]]=='.')  and check==False):
+                    temp = copy.deepcopy(board)
+                    for k in range(j-1,j+1):
+                        temp[i.posx[0]-k][i.posy[0] ] = i.letter
+                    temp[i.posx[1]][i.posy[1]] = '.'
+                    if(j>1):
                         temp[i.posx[0]][i.posy[0]] = '.'
-                        move = str(i.letter)+'r' + str(1)
-                        values[move] = temp
-                        fuel = fuel[f'{i.letter}']
-                        fuel[f'{i.letter}'] = fuel - 1
-                    if((i.posy[1]+2) <=5 and (board[i.posx[1]][i.posy[1]+2] == '.') and (board[i.posx[1]][i.posy[1]+1]=='.')):
-                        #swap board(x[0]y[0+2] with i, board(x[0]y[0=1] with i, x0y0 with'.' and x1y1 with '.'
-                        temp = copy.deepcopy(board)
-                        temp[i.posx[1]][i.posy[1] + 2] = i.letter
-                        temp[i.posx[1]][i.posy[1] + 1] = i.letter
-                        temp[i.posx[0]][i.posy[0]] = '.'
+                    move =str(i.letter)+'u'+str(j)
+                    tempFuel = copy.deepcopy(fuel)
+                    fl = int(tempFuel[f'{i.letter}']-j)
+                    tempFuel[f'{i.letter}'] = fl 
+                    #add the moves, fuel, board for each different moves
+                    if(temp in boards)==False:
+                        boardList.append(temp)
+                        movelist.append(move)
+                        fuelList.append(tempFuel) 
+                elif((i.length==3) and(i.posx[0]-j)>=0 and (board[i.posx[0]-j][i.posy[0]]=='.')  and check==False):
+                    temp = copy.deepcopy(board)
+                    for k in range(j-1,j+1):
+                        temp[i.posx[0]-k][i.posy[0] ] = i.letter
+                    temp[i.posx[2]][i.posy[2]] = '.'
+                    if(j>1):
                         temp[i.posx[1]][i.posy[1]] = '.'
-                        move = str(i.letter)+'r' + str(2)
-                        values[move] = temp
-                        fuel = fuel[f'{i.letter}']
-                        fuel[f'{i.letter}'] = fuel - 2
-                    if ((i.posy[1] + 3) <= 5 and (board[i.posx[1]][i.posy[1] + 3] == '.')and (board[i.posx[1]][i.posy[1]+2] == '.') and (board[i.posx[1]][i.posy[1]+1]=='.')):
-                        #swap  board(x[0]y[0+3] with i board(x[0]y[0+2] with i, x0y0 with'.' and x1y1 with '.'
-                        temp = copy.deepcopy(board)
-                        temp[i.posx[1]][i.posy[1] + 2] = i.letter
-                        temp[i.posx[1]][i.posy[1] + 3] = i.letter
-                        temp[i.posx[0]][i.posy[0]] = '.'
+                        if(j>2):
+                            temp[i.posx[0]][i.posy[0]] = '.'
+                            temp[i.posx[0]-1][i.posy[0] ] = i.letter
+                    move =str(i.letter)+'u'+str(j)
+                    tempFuel = copy.deepcopy(fuel)
+                    fl = int(tempFuel[f'{i.letter}']-j)
+                    tempFuel[f'{i.letter}'] = fl 
+                    #add the moves, fuel, board for each different moves
+                    if(temp in boards)==False:
+                        boardList.append(temp)
+                        movelist.append(move)
+                        fuelList.append(tempFuel) 
+                else:
+                    check=True
+
+    #all down possible moves 
+    for i in carlist:
+        if( fuel[f'{i.letter}'] > 0  and i.orientation=='vertical'):
+            check=False
+            for j in range (1,5):
+                if((i.length==2) and (i.posx[1]+j)<=5 and (board[i.posx[1]+j][i.posy[1]]=='.')  and check==False ):
+                    temp = copy.deepcopy(board)
+                    for k in range(j-1,j+1):
+                        temp[i.posx[1]+k][i.posy[1] ] = i.letter
+                    temp[i.posx[0]][i.posy[0]] = '.'
+                    if(j>1):
                         temp[i.posx[1]][i.posy[1]] = '.'
-                        move = str(i.letter)+'r' + str(3)
-                        values[move] = temp
-                        fuel = fuel[f'{i.letter}']
-                        fuel[f'{i.letter}'] = fuel - 3
-                    if ((i.posy[1] + 4) <= 5 and (board[i.posx[1]][i.posy[1] + 4] == '.')and (board[i.posx[1]][i.posy[1] + 3] == '.')and (board[i.posx[1]][i.posy[1]+2] == '.') and (board[i.posx[1]][i.posy[1]+1]=='.')):
-                        #swap  board(x[0]y[0+4] with i board(x[0]y[0+3] with i, x0y0 with'.' and x1y1 with '.'
-                        temp = copy.deepcopy(board)
-                        temp[i.posx[1]][i.posy[1] + 4] = i.letter
-                        temp[i.posx[1]][i.posy[1] + 3] = i.letter
-                        temp[i.posx[0]][i.posy[0]] = '.'
+                    move =str(i.letter)+'d'+str(j)
+                    tempFuel = copy.deepcopy(fuel)
+                    fl = int(tempFuel[f'{i.letter}']-j)
+                    tempFuel[f'{i.letter}'] = fl 
+                    #add the moves, fuel, board for each different moves
+                    if(temp in boards)==False:
+                        boardList.append(temp)
+                        movelist.append(move)
+                        fuelList.append(tempFuel) 
+                elif((i.length==3) and (i.posx[2]+j)<=5 and (board[i.posx[2]+j][i.posy[2]]=='.')  and check==False):
+                    temp = copy.deepcopy(board)
+                    for k in range(j-1,j+1):
+                        temp[i.posx[1]+k][i.posy[1] ] = i.letter
+                    temp[i.posx[0]][i.posy[0]] = '.'
+                    if(j>1):
                         temp[i.posx[1]][i.posy[1]] = '.'
-                        move = str(i.letter)+'r' + str(4)
-                        values[move] = temp
-                        fuel = fuel[f'{i.letter}']
-                        fuel[f'{i.letter}'] = fuel - 4
-                if(i.length==3):
-                    if ((i.posy[0] - 1) >= 0 and (board[i.posx[0] ][i.posy[0]-1] == '.')):
-                        # swap board(x[0]y[0-1]) with i  and swap board(x[2]y[2] with '.'
-                        temp = copy.deepcopy(board)
-                        temp[i.posx[0]][i.posy[0] - 1] = i.letter
-                        temp[i.posx[2]][i.posy[2]] = '.'
-                        move = str(i.letter)+'l' + str(1)+str(3)
-                        values[move] = temp
-                        fuel = fuel[f'{i.letter}']
-                        fuel[f'{i.letter}'] = fuel - 1
-                    if ((i.posy[0] - 2) >= 0 and (board[i.posx[0] ][i.posy[0]-2] == '.')and (board[i.posx[0] ][i.posy[0]-1] == '.')):
-                        #swap board(x[0]y[0-2] with i, board(x[0]y[0-1] with i, x1y1 with'.' and x2y2 with '.'
-                        temp = copy.deepcopy(board)
-                        temp[i.posx[0]][i.posy[0] -2] = i.letter
-                        temp[i.posx[0]][i.posy[0] - 1] = i.letter
-                        temp[i.posx[1]][i.posy[1]] = '.'
-                        temp[i.posx[2]][i.posy[2]] = '.'
-                        move = str(i.letter)+'l' + str(2)+str(3)
-                        values[move] =temp
-                    if ((i.posy[0] - 3) >= 0 and (board[i.posx[0] ][i.posy[0]-3] == '.')and (board[i.posx[0] ][i.posy[0]-2] == '.')and (board[i.posx[0] ][i.posy[0]-1] == '.')):
-                        #swap  board(x[0]y[0-3] with i board(x[0]y[0-2] with i board(x[0]y[0-1] with i, x0y0 with'.' and x1y1 with '.' x2y2 with '.'
-                        temp = copy.deepcopy(board)
-                        temp[i.posx[0]][i.posy[0] - 3] = i.letter
-                        temp[i.posx[0]][i.posy[0] - 2] = i.letter
-                        temp[i.posx[0]][i.posy[0] - 1] = i.letter
-                        temp[i.posx[0]][i.posy[0]] = '.'
-                        temp[i.posx[1]][i.posy[1]] = '.'
-                        temp[i.posx[2]][i.posy[2]] = '.'
-                        move = str(i.letter)+'l' + str(3)+str(3)
-                        values[move] = temp
-                    if ((i.posy[2] + 1) <=5 and (board[i.posx[2] ][i.posy[2]+1] == '.')):
-                        # swap board(x[0]y[0+1]) with i  and swap board(x[0]y[0] with '.'
-                        temp = copy.deepcopy(board)
-                        temp[i.posx[2]][i.posy[2] + 1] = i.letter
-                        temp[i.posx[0]][i.posy[0]] = '.'
-                        move = str(i.letter)+'r' + str(1)+str(3)
-                        values[move] = temp
-                    if ((i.posy[2] + 2) <=5 and (board[i.posx[2] ][i.posy[2]+2] == '.')and (board[i.posx[1] ][i.posy[1]+1] == '.')):
-                        #swap board(x[0]y[0+2] with i, board(x[0]y[0+1] with i, x0y0 with'.' and x1y1 with '.'
-                        temp = copy.deepcopy(board)
-                        temp[i.posx[2]][i.posy[2] + 2] = i.letter
-                        temp[i.posx[2]][i.posy[2] + 1] = i.letter
-                        temp[i.posx[0]][i.posy[0]] = '.'
-                        temp[i.posx[1]][i.posy[1]] = '.'
-                        move = str(i.letter)+'r' + str(2)+str(3)
-                        values[move] = temp
-                    if ((i.posy[2] + 3) <=5 and (board[i.posx[2] ][i.posy[2]+3] == '.')and (board[i.posx[1] ][i.posy[1]+2] == '.')and (board[i.posx[1] ][i.posy[1]+1] == '.')):
-                        #swap  board(x[0]y[0+3] with i board(x[0]y[0+2] with i board(x[0]y[0+1] with i, x0y0 with'.' and x1y1 with '.' x2y2 with '.'
-                        temp = copy.deepcopy(board)
-                        temp[i.posx[2]][i.posy[2] + 3] = i.letter
-                        temp[i.posx[2]][i.posy[2] + 2] = i.letter
-                        temp[i.posx[2]][i.posy[2] + 1] = i.letter
-                        temp[i.posx[0]][i.posy[0]] = '.'
-                        temp[i.posx[1]][i.posy[1]] = '.'
-                        temp[i.posx[2]][i.posy[2]] = '.'
-                        move = str(i.letter)+'r' + str(3)+str(3)
-                        values[move] = temp
-            else:
-                if (i.length == 2):
-                    if ((i.posx[0] - 1) >= 0 and (board[i.posx[0]-1][i.posy[0] ] == '.')):
-                        # swap board(x[0-1]y[0]) with i  and swap board(x[1]y[1] with '.'
-                        temp = copy.deepcopy(board)
-                        temp[i.posx[0]-1][i.posy[0]] = i.letter
-                        temp[i.posx[1]][i.posy[1]] = '.'
-                        move = str(i.letter)+'u' + str(1)
-                        values[move] = temp
-                    if ((i.posx[0] - 2) >= 0 and (board[i.posx[0]-2][i.posy[0]] == '.')and (board[i.posx[0]-1][i.posy[0] ] == '.')):
-                        #swap board(x[0-2]y[0] with i, board(x[0-1]y[0] with i, x0y0 with'.' and x1y1 with '.'
-                        temp = copy.deepcopy(board)
-                        temp[i.posx[0] - 2][i.posy[0]] = i.letter
-                        temp[i.posx[0] - 1][i.posy[0]] = i.letter
-                        temp[i.posx[1]][i.posy[1]] = '.'
-                        temp[i.posx[0]][i.posy[0]] = '.'
-                        move = str(i.letter)+'u' + str(2)
-                        values[move] = temp
-                    if ((i.posx[0] - 3) >= 0 and (board[i.posx[0]-3][i.posy[0] ] == '.')and (board[i.posx[0]-2][i.posy[0]] == '.')and (board[i.posx[0]-1][i.posy[0] ] == '.')):
-                        #swap  board(x[0-3]y[0] with i board(x[0-2]y[0] with i, x0y0 with'.' and x1y1 with '.'
-                        temp = copy.deepcopy(board)
-                        temp[i.posx[0] - 2][i.posy[0]] = i.letter
-                        temp[i.posx[0] - 3][i.posy[0]] = i.letter
-                        temp[i.posx[1]][i.posy[1]] = '.'
-                        temp[i.posx[0]][i.posy[0]] = '.'
-                        move = str(i.letter)+'u' + str(3)
-                        values[move] = temp
-                    if ((i.posx[0] - 4) >= 0 and (board[i.posx[0]-4][i.posy[0] ] == '.')and (board[i.posx[0]-3][i.posy[0] ] == '.')and (board[i.posx[0]-2][i.posy[0]] == '.')and (board[i.posx[0]-1][i.posy[0] ] == '.')):
-                        #swap  board(x[0-4]y[0] with i board(x[0-3]y[0] with i, x0y0 with'.' and x1y1 with '.'
-                        temp = copy.deepcopy(board)
-                        temp[i.posx[0] - 4][i.posy[0]] = i.letter
-                        temp[i.posx[0] - 3][i.posy[0]] = i.letter
-                        temp[i.posx[1]][i.posy[1]] = '.'
-                        temp[i.posx[0]][i.posy[0]] = '.'
-                        move = str(i.letter)+'u' + str(2)
-                        values[move] =temp
-                    if ((i.posx[1] + 1) <= 5 and (board[i.posx[1]+1][i.posy[1] ] == '.')):
-                        ##swap board(x[0+1]y[0]) with i  and swap board(x[0]y[0] with '.'
-                        temp = copy.deepcopy(board)
-                        temp[i.posx[1] + 1][i.posy[1]] = i.letter
-                        temp[i.posx[0]][i.posy[0]] = '.'
-                        move = str(i.letter)+'d' + str(1)
-                        values[move] = temp
-                    if ((i.posx[1] + 2) <= 5 and (board[i.posx[1]+2][i.posy[1] ] == '.')and (board[i.posx[1]+1][i.posy[1] ] == '.')):
-                        # swap board(x[0+2]y[0] with i, board(x[0]y[0+1] with i, x0y0 with'.' and x1y1 with '.'
-                        temp = copy.deepcopy(board)
-                        temp[i.posx[1] + 2][i.posy[1]] = i.letter
-                        temp[i.posx[1] + 1][i.posy[1]] = i.letter
-                        temp[i.posx[0]][i.posy[0]] = '.'
-                        temp[i.posx[1]][i.posy[1]] = '.'
-                        move = str(i.letter)+'d' + str(2)
-                        values[move] = temp
-                    if ((i.posx[1] + 3) <= 5 and (board[i.posx[1]+3][i.posy[1] ] == '.')and (board[i.posx[1]+2][i.posy[1] ] == '.')and (board[i.posx[1]+1][i.posy[1] ] == '.')):
-                        #swap  board(x[0+3]y[0] with i board(x[0+2]y[0] with i, x0y0 with'.' and x1y1 with '.'
-                        temp = copy.deepcopy(board)
-                        temp[i.posx[1] + 2][i.posy[1]] = i.letter
-                        temp[i.posx[1] + 3][i.posy[1]] = i.letter
-                        temp[i.posx[0]][i.posy[0]] = '.'
-                        temp[i.posx[1]][i.posy[1]] = '.'
-                        move = str(i.letter)+'d' + str(3)
-                        values[move] = temp
-                    if ((i.posx[1] + 4) <= 5 and (board[i.posx[1]+4][i.posy[1] ] == '.')and (board[i.posx[1]+3][i.posy[1] ] == '.')and (board[i.posx[1]+2][i.posy[1] ] == '.')and (board[i.posx[1]+1][i.posy[1] ] == '.')):
-                        # swap  board(x[0+4]y[0] with i board(x[0+3]y[0] with i, x0y0 with'.' and x1y1 with '.'
-                        temp = copy.deepcopy(board)
-                        temp[i.posx[1] + 4][i.posy[1]] = i.letter
-                        temp[i.posx[1] + 3][i.posy[1]] = i.letter
-                        temp[i.posx[0]][i.posy[0]] = '.'
-                        temp[i.posx[1]][i.posy[1]] = '.'
-                        move = str(i.letter)+'d' + str(4)
-                        values[move] = temp
-                if (i.length == 3):
-                    if ((i.posx[0] - 1) >= 0 and (board[i.posx[0]-1][i.posy[0]] == '.')):
-                        # swap board(x[0-1]y[0]) with i  and swap board(x[2]y[2] with '.'
-                        temp = copy.deepcopy(board)
-                        temp[i.posx[0] - 1][i.posy[0]] = i.letter
-                        temp[i.posx[2]][i.posy[2]] = '.'
-                        move =str(i.letter)+ 'u' + str(1)+str(3)
-                        values[move] = temp
-                    if ((i.posx[0] - 2) >= 0 and (board[i.posx[0]-2][i.posy[0] ] == '.')and (board[i.posx[0]-1][i.posy[0]] == '.')):
-                        #swap board(x[0-2]y[0] with i, board(x[0-1]y[0] with i, x1y1 with'.' and x2y2 with '.'
-                        temp = copy.deepcopy(board)
-                        temp[i.posx[0] - 2][i.posy[0]] = i.letter
-                        temp[i.posx[0] - 1][i.posy[0]] = i.letter
-                        temp[i.posx[1]][i.posy[1]] = '.'
-                        temp[i.posx[2]][i.posy[2]] = '.'
-                        move = str(i.letter)+'u' + str(2)+str(3)
-                        values[move] = temp
-                    if ((i.posx[0] - 3) >= 0 and (board[i.posx[0]-3][i.posy[0] ] == '.')and (board[i.posx[0]-2][i.posy[0] ] == '.')and (board[i.posx[0]-1][i.posy[0]] == '.')):
-                        # swap  board(x[0-3]y[0] with i board(x[0-2]y[0] with i board(x[0-1]y[0] with i, x0y0 with'.' and x1y1 with '.' x2y2 with '.'
-                        temp = copy.deepcopy(board)
-                        temp[i.posx[0] - 1][i.posy[0]] = i.letter
-                        temp[i.posx[0] - 2][i.posy[0]] = i.letter
-                        temp[i.posx[0] - 3][i.posy[0]] = i.letter
-                        temp[i.posx[2]][i.posy[2]] = '.'
-                        temp[i.posx[1]][i.posy[1]] = '.'
-                        temp[i.posx[0]][i.posy[0]] = '.'
-                        move = str(i.letter)+'u' + str(3)+str(3)
-                        values[move] = temp
-                    if ((i.posx[2] + 1) <=5 and (board[i.posx[2]+1][i.posy[2] ] == '.')):
-                        # swap board(x[2+1]y[0]) with i  and swap board(x[0]y[0] with '.'
-                        temp = copy.deepcopy(board)
-                        temp[i.posx[2] + 1][i.posy[2]] = i.letter
-                        temp[i.posx[0]][i.posy[0]] = '.'
-                        move = str(i.letter)+'d' + str(1)+str(3)
-                        values[move] = temp
-                    if ((i.posx[2] + 2) <=5 and (board[i.posx[2]+2][i.posy[2] ] == '.')and (board[i.posx[2]+1][i.posy[2] ] == '.')):
-                        #swap board(x[2+2]y[0] with i, board(x[2+1]y[0] with i, x0y0 with'.' and x1y1 with '.'
-                        temp = copy.deepcopy(board)
-                        temp[i.posx[2] + 1][i.posy[2]] = i.letter
-                        temp[i.posx[2] + 2][i.posy[2]] = i.letter
-                        temp[i.posx[0]][i.posy[0]] = '.'
-                        temp[i.posx[1]][i.posy[1]] = '.'
-                        move = str(i.letter)+'d' + str(2)+str(3)
-                        values[move] = temp
-                    if ((i.posx[2] + 3) <=5 and (board[i.posx[2]+3][i.posy[2] ] == '.')and (board[i.posx[2]+2][i.posy[2] ] == '.')and (board[i.posx[2]+1][i.posy[2] ] == '.')):
-                        #swap  board(x[2+3]y[0] with i board(x[2+2]y[0] with i board(x[2+1]y[0] with i, x0y0 with'.' and x1y1 with '.' x2y2 with '.'
-                        temp = copy.deepcopy(board)
-                        temp[i.posx[2] + 1][i.posy[2]] = i.letter
-                        temp[i.posx[2] + 2][i.posy[2]] = i.letter
-                        temp[i.posx[2] + 3][i.posy[2]] = i.letter
-                        temp[i.posx[0]][i.posy[0]] = '.'
-                        temp[i.posx[1]][i.posy[1]] = '.'
-                        temp[i.posx[2]][i.posy[2]] = '.'
-                        move =str(i.letter)+ 'd' + str(3)+str(3)
-                        values[move] = temp
-    return values
-# also return the corresponding list of fuels
+                        if(j>2):
+                            temp[i.posx[2]][i.posy[2]] = '.'
+                            temp[i.posx[0]+1][i.posy[0]] = i.letter
+                    move =str(i.letter)+'d'+str(j)
+                    tempFuel = copy.deepcopy(fuel)
+                    fl = int(tempFuel[f'{i.letter}']-j)
+                    tempFuel[f'{i.letter}'] = fl 
+                    #add the moves, fuel, board for each different moves
+                    if(temp in boards)==False:
+                        boardList.append(temp)
+                        movelist.append(move)
+                        fuelList.append(tempFuel) 
+                else:
+                    check=True
+
+    return boardList, fuelList, movelist
 
 
-def nextNode(nodeValue):
-    newBoards = computeMoves(nodeValue.board, nodeValue.fuel)
+def nextNode(presentNodeValue, checkerList):
+    boards, fuels, moves = computeMove(presentNodeValue.board, presentNodeValue.fuel, checkerList)
     newNodes=[]
-    keys = []#stores all the moves
-    value = []# stores all the boards
-    for i in newBoards:
-        keys.append(i)
-        value.append(newBoards[i])
     # create nodes with the new boards
-    for i in range(len(newBoards)):
-        obj = node.setNode(value[i], nodeValue, keys[i][0:3], int(nodeValue.level + 1), int(keys[i][2]), nodeValue.fuel)
+    for i in range(len(boards)):
+        obj = node.setNode(boards[i], presentNodeValue, moves[i], int(presentNodeValue.level)+1, fuels[i])
         newNodes.append(obj)
 
     return newNodes
 
-def SearchNodeList(node, list):
-    # compare node.board with all the list.board(s)
-    boards=[]
-    for i in list:
-        board.append(i.board)
-
-    if node.board in boards:
-        return True
-    else:
-        return False
-
 
 
 def ucs(startBoard, fuel):
-    initial = node.setNode(startBoard, None, 'None', 0, 0, fuel) #previ, move, level, cost
+    initial = node.setNode(startBoard, None, 'None', 0, fuel) #previ, move, level, cost
     solpath=[] # basically has the closed list
     checkerList=[]
     count =1
     solpath.append(initial)
     checkerList.append(initial)
-    present =  solpath.pop(0)
+    present = solpath.pop(0) 
     while(present.board[2][5] != 'A' ) :
-        next_nodes = nextNode(present)
+        next_nodes = nextNode(present, checkerList)
         for i in next_nodes:
-            # only add to the solpath if not already present in sol path(compare the boards)
-            if(SearchNodeList(i,checkerList) == False):
-                solpath.append(i)
-                checkerList.append(i)
-                count = count+1
-        #solpath.sort(key=lambda x: x.level)
-        present = solpath.pop(0)
+            solpath.append(i)
+            checkerList.append(i)
+            count = count+1 
+        if(len(solpath)==0):
+            break
+        else:
+            present = solpath.pop(0)  
     searchMoves = []
     searchPath = []
+
     while(present.previous!=None):
         searchMoves.append(present.move)
         searchPath.append(present.board)
         present = present.previous
 
-    return searchMoves, count, searchPath
+    return searchMoves, count, searchPath, checkerList
 
-
-
-searchPathMoves, statecount, searchPath= ucs(board, fuel)
+searchPathMoves, statecount, searchPath, allStates = ucs(board, fuel)
 stop = time.time()
-print('execution time ',stop-start,' seconds')
-print('search path length',statecount, ' states')
-print('solution path length', len(searchPathMoves), ' moves')
 
 def parseMove(string):
     if string == 'u':
@@ -479,12 +366,9 @@ def solMoveString(searchPathMoves):
     return solutionPathString
 
 
-print('solution path ', solMoveString(searchPathMoves))
+
 
 def solPathMoves(searchPathMoves,searchPath):
-    moves = searchPathMoves
-
-
     for i in reversed(range(len(searchPath))):
         print('{}  {}'.format(searchPathMoves[i][0]+' '+parseMove(searchPathMoves[i][1])+' '+searchPathMoves[i][2]+' ',''.join(map(str,[ i for j in searchPath[i] for i in j]))))
 
@@ -495,4 +379,14 @@ def solPathMoves(searchPathMoves,searchPath):
         print('')
 
 
-solPathMoves(searchPathMoves, searchPath)
+
+if(searchPath[0][2][5]!='A'):
+    print('no solution')
+else:
+    print('solution path ', solMoveString(searchPathMoves))
+    print('execution time ',stop-start,' seconds')
+    print('search path length',statecount, ' states')
+    print('solution path length', len(searchPathMoves), ' moves')
+    solPathMoves(searchPathMoves, searchPath)
+
+

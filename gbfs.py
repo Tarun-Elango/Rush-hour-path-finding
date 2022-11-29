@@ -1,12 +1,10 @@
 from vehicle import vehicle
-from node import node
+from informedNode import informedNode
 import copy
 import time
-import json
-import os.path
 
 # read input file and store data into data structure
-def readInput(input):# has arrays of puzzle
+def readInput(input):
     valuesArray = []
     f = open(f"{input}.txt", 'r')
     for i in f.read().splitlines():
@@ -21,7 +19,39 @@ def readInput(input):# has arrays of puzzle
 
     return newArray
 
-#pretty print puzzle
+
+arrayPuzzle = readInput('input')
+size = len(arrayPuzzle)
+
+print('number of puzzles ',size)
+check = False
+while(check==False):
+    puzzleNumber = input(f'choose puzzle number between 1 and {size} :')
+    if (int(puzzleNumber) > int(size) or int(puzzleNumber) < 1):
+        print('wrong input')
+    else:
+        check=True
+
+# puzzleumber has user desired puzzle
+#store array into desired data structure with other details for each puzzle
+#one array 6x6 to store matrix, one array 1D to store data
+
+unique= sorted(set(arrayPuzzle[int(puzzleNumber)-1][0:36]))
+if '.' in unique: unique.remove('.')
+fuel={}
+for j in range(len(unique)):
+    fuel[unique[j]]=100
+
+remaining = arrayPuzzle[int(puzzleNumber)-1][36:len(arrayPuzzle[int(puzzleNumber)-1])].replace(' ','')
+#print((remaining))
+if(len(arrayPuzzle[int(puzzleNumber)-1])>36):  #integer value should be until the end of file, or before another english.(we remove space)
+    check= 0
+    while(check<=len(remaining)/2):
+        fuel[remaining[check]]=int(remaining[check+1])
+        check = check+2
+
+
+
 def printPuzzle(array):
     for i in range(0,len(array)):
         if(i%6==5):
@@ -29,17 +59,14 @@ def printPuzzle(array):
         else:
             print(array[i], end =" "),
 
-def printPuzzleTextFile(array, text):
-        for i in range(0,len(array)):
-            if(i%6==5):
-                text.write(array[i])
-                text.write('\n')
-            else:
-                text.write(array[i])
-                text.write('')
 
+
+print(f'initial puzzle is {arrayPuzzle[int(puzzleNumber)-1]}')
+printPuzzle(arrayPuzzle[int(puzzleNumber)-1][0:36])
+print('car fuel available ',fuel)
+start = time.time()
 #create a matrix of the given board
-def getBoardMatrix(input):
+def boardMatrix(input):
     board = [[0]*6 for i in range(6)]
     i=0
     j=0
@@ -53,8 +80,8 @@ def getBoardMatrix(input):
 
     return board
 
-# find orientation of board
-def getCarOrientation(board,i):
+
+def orientation(board,i):
     lt =[]
     for k in range(6):
         for j in range(6):
@@ -67,8 +94,11 @@ def getCarOrientation(board,i):
     else:
         return 'horizontal'
 
+# following has the board
+board = boardMatrix(arrayPuzzle[int(puzzleNumber)-1][0:36])
+
 #get all the car atrributes
-def defineCar(board, unique):
+def defCar(board, unique):
     cars=[] #hold object os cars
     for i in unique:
         # id, posx, posy, length, ori, fuel
@@ -82,20 +112,19 @@ def defineCar(board, unique):
                 if (board[k][j] == f'{i}'):
                     posx.append(k)
                     posy.append(j)
-        orient = getCarOrientation(board, i)
+        orient = orientation(board, i)
         obj = vehicle.setVechicle(i,posx, posy, length, orient)
         cars.append(obj)
     return cars # set of car objects
 
-#compute all possible moves for a given board
-def computeMoves(board, fuel, checkerList,unique): 
+def computeMove(board, fuel, checkerList): #board has the current nodes board, fuel has the current nodes fuel, checkerList has all the nodes visited
     boards=[]#contains all the boards that have already been passed
     for i in checkerList:
         boards.append(i.board)
     boardList = [] 
     movelist = [] 
     fuelList= [] 
-    carlist = defineCar(board, unique) #this list has all the cars for the given board
+    carlist = defCar(board, unique) #this list has all the cars for the given board
 
     # give the board, get the car
     #consider boards visited, fuel
@@ -396,8 +425,57 @@ def computeMoves(board, fuel, checkerList,unique):
 
     return boardList, fuelList, movelist
 
-# remove any vehicle at the exit
-def valetService(board, unique):
+def h2(board): # returns the number of alphabets blocking A to the right 
+    score = 0
+    posy= None
+    for i in range(0,6):
+        if (board[2][i]=='A'):
+            posy=i
+    for i in range(0,6):
+        if(i>posy and board[2][i]!='.' and board[2][i]!='A'):
+            score = score + 1
+    return score
+
+def h1(board):
+    #returns the number of vehicles blocking A to the right 1,2,3
+    #blocking vehicles, check row 3, how many car elements present in the row to 'A''s right
+    score = []
+    posy= None
+    for i in range(0,6):
+        if (board[2][i]=='A'):
+            posy=i
+    for i in range(0,6):
+        if(i>posy and board[2][i]!='.' and board[2][i]!='A'):
+            score.append(board[2][i])
+    return len(set(score))
+
+def h3(board):
+    #returns the number of vehicles blocking A to the right 1,2,3
+    #blocking vehicles, check row 3, how many car elements present in the row to 'A''s right
+    score = []
+    posy= None
+    for i in range(0,6):
+        if (board[2][i]=='A'):
+            posy=i
+    for i in range(0,6):
+        if(i>posy and board[2][i]!='.' and board[2][i]!='A'):
+            score.append(board[2][i])
+    return len(set(score))*5
+
+def h4(board):#combination of how far A is away from [2][5], vehciles blocking a
+    veh = []
+    posy= None
+    for i in range(0,6):
+        if (board[2][i]=='A'):
+            posy=i
+    for i in range(0,6):
+        if(i>posy and board[2][i]!='.' and board[2][i]!='A'):
+            veh.append(board[2][i])
+    # A's pos from end
+    posFromEnd = 5-posy
+    return len(set(veh))*5 + posFromEnd
+
+def valet(board):
     veh = None
     if(board[2][5]!='.' and board[2][4]!='.' and board[2][5]!='A' and board[2][4]!='A'):
         if(board[2][5]==board[2][4]):
@@ -414,56 +492,53 @@ def valetService(board, unique):
                 board[2][2] = '.'
     return board
 
-#get the children node for a given node
-def getNextNodes(presentNodeValue, checkerList, unique):
-    boards, fuels, moves = computeMoves(presentNodeValue.board, presentNodeValue.fuel, checkerList, unique)
+def nextNode(presentNodeValue, checkerList):
+    boards, fuels, moves = computeMove(presentNodeValue.board, presentNodeValue.fuel, checkerList)
     newNodes=[]
-    # create the children nodes with the respective attributes
+    # create nodes with the new boards
     for i in range(len(boards)):
-        valetBoard = valetService(boards[i],unique)
-        obj = node.setNode(valetBoard, presentNodeValue, moves[i], int(presentNodeValue.level)+1, fuels[i], int(presentNodeValue.cost)+1)
+        valetBoard = valet(boards[i])
+        obj = informedNode.setinfNode(valetBoard, presentNodeValue, moves[i], int(presentNodeValue.level)+1, fuels[i], h1(boards[i]))# heu = heu 
         newNodes.append(obj)
 
     return newNodes
 
-# ucs algorithm 
-def ucs(startBoard, fuel, unique):
-    initial = node.setNode(valetService(startBoard, unique), None, 'None', 0, fuel,0) # create the inital node
-      
-    openList=[] # the list with nodes, that have found but haven't explored( to check for goal, or to check if children exist)
-    checkerList=[] # list that contains all open + close list at any point in time.
-    closedList=[] # this list contains only the nodes, that have been visited
 
-    openList.append(initial) # push inital node to open list
-    checkerList.append(initial) # push inital node to open list
+def gbfs(startBoard, fuel): 
+    initial = informedNode.setinfNode(valet(startBoard), None, 'None', 0, fuel, h1(startBoard))
+    openList=[] 
+    checkerList=[]
+    closedList=[]
 
-    present = openList.pop(0) # pop out the first node from open list to explore
-    closedList.append(present)  # add it to closed list, as it will surely be explored
+    openList.append(initial)
+    checkerList.append(initial)
+    present = openList.pop(0) 
+    closedList.append(present)
+    while(present.board[2][5] != 'A' ) :
+        next_nodes = nextNode(present, checkerList)
+        for i in next_nodes:    
+            openList.append(i)
+            checkerList.append(i)
 
-    while(present.board[2][5] != 'A' ) :  
-        next_nodes = getNextNodes(present, checkerList, unique) # get all children for the current node
-        for i in next_nodes:   
-            openList.append(i) # add all children to open list. any children already present in closed or open list will be ignored (as the cost of node visited first will always be less,
-            # because each move irrespective of distance move will be of cost 1)
-            checkerList.append(i) # this list keeps track of closed + open list, such that the next node visited/childer generated will be compared with this to ignore duplicates
-        
-        if(len(openList)==0): # at this stage if the openlist is empty, i.e all possible nodes have been visited, then break
+        if(len(openList)==0):
             break
         else:
-            present = openList.pop(0)  # remove the first node from open list for next iteration 
-            closedList.append(present) # add all the eplored nodes to 
+            openList.sort(key=lambda x: x.heu, reverse=False)
+            present = openList.pop(0)  
+            closedList.append(present)
+    searchMoves = []
+    searchPath = []
 
-    
-    searchMoves = [] # trace back the moves from goal to intial 
-    searchPath = [] # trace back boards from goal to intial 
     while(present.previous!=None):
         searchMoves.append(present.move)
         searchPath.append(present.board)
         present = present.previous
 
-    return searchMoves, searchPath, checkerList, closedList
+    return searchMoves, closedList, searchPath, checkerList
 
-# sub function to pretty print moves
+searchPathMoves, closedList, searchPath, allStates = gbfs(board, fuel)
+stop = time.time()
+
 def parseMove(string):
     if string == 'u':
         return '   up'
@@ -474,14 +549,15 @@ def parseMove(string):
     if string == 'r':
         return 'right'
 
-# function to pretty print solution path 
 def solMoveString(searchPathMoves):
     solutionPathString=''
     for i in reversed(searchPathMoves):
         solutionPathString = solutionPathString + i[0]+' '+parseMove(i[1])+' '+i[2]+' ; '
     return solutionPathString
 
-# function to pretty print solution path moves / final board state
+
+
+
 def solPathMoves(searchPathMoves,searchPath):
     for i in reversed(range(len(searchPath))):
         print('{}  {}'.format(searchPathMoves[i][0]+' '+parseMove(searchPathMoves[i][1])+' '+searchPathMoves[i][2]+' ',''.join(map(str,[ i for j in searchPath[i] for i in j]))))
@@ -492,155 +568,16 @@ def solPathMoves(searchPathMoves,searchPath):
                 print(final[i][j], end=" ")
         print('')
 
-# function to pretty print solution path to text file
-def printSolPathMovesTextFile(searchPathMoves,searchPath, text):
-    for i in reversed(range(len(searchPath))):
-        text.write('{}  {}'.format(searchPathMoves[i][0]+' '+parseMove(searchPathMoves[i][1])+' '+searchPathMoves[i][2]+' ',''.join(map(str,[ i for j in searchPath[i] for i in j]))))
-        text.write('\n')
 
-    text.write('\n')
 
-    final = searchPath[0]
-    for i in range(6):
-        for j in range(6):
-                text.write(final[i][j])
-                text.write('')
-        text.write('\n')
+if(searchPath[0][2][5]!='A'):
+    print('no solution')
+else:
+    print('solution path ', solMoveString(searchPathMoves))
+    print('execution time ',stop-start,' seconds')
+    print('search path length',len(closedList), ' states')
+    print('solution path length', len(searchPathMoves), ' moves')
+    solPathMoves(searchPathMoves, searchPath)
 
-# function to pretty print search path to text file
-def printSearchPathTextFile(closedList, i):
-        #search path result, closedList has all the searched paths
-    file = './Output/ucs/search files'
-    fileName = f"ucs-search-{i}.txt"
-    pathName = os.path.join(file, fileName)
-    searchTextFile = open(pathName,"w+")    
 
-    for p in closedList:
-        searchTextFile.write(str(p.level))
-        searchTextFile.write(' ')
-        searchTextFile.write(str(p.cost))
-        searchTextFile.write(' ')
-        searchTextFile.write(str(0))
-        searchTextFile.write(' ')
-        for k in range(6):
-            for j in range(6):
-                searchTextFile.write(p.board[k][j])
-                searchTextFile.write('')
-        searchTextFile.write('\n')
 
-# runs all the puzzle from input.txt
-def runAllPuzzle(): # will not disply on terminal, output in the text files
-    arrayPuzzle = readInput('input') # has all the puzzles
-    for i in range(1, len(arrayPuzzle)+1):
-        folder = './Output/ucs/solution files'
-        name = f"ucs-sol-{i}.txt"
-        path = os.path.join(folder, name)
-        textFile = open(path,"w+")
-        unique= sorted(set(arrayPuzzle[int(i)-1][0:36]))
-        if '.' in unique: unique.remove('.')
-        fuel={}
-        for j in range(len(unique)):
-            fuel[unique[j]]=100
-        remaining = arrayPuzzle[int(i)-1][36:len(arrayPuzzle[int(i)-1])].replace(' ','')
-        #print((remaining))s
-        if(len(arrayPuzzle[int(i)-1])>36):  #integer value should be until the end of file, or before another english.(we remove space)
-            check= 0
-            while(check<=len(remaining)/2):
-                fuel[remaining[check]]=int(remaining[check+1])
-                check = check+2
-        #print(f'initial puzzle is {arrayPuzzle[int(i)-1]}')
-        textFile.write(f'initial puzzle is {arrayPuzzle[int(i)-1]}')
-        textFile.write('\n\n')
-        #printPuzzle(arrayPuzzle[int(i)-1][0:36])
-        printPuzzleTextFile(arrayPuzzle[int(i)-1][0:36], textFile)
-        textFile.write('\n\n')
-        #print('car fuel available ',fuel)
-        textFile.write('car fuel available: ')
-        textFile.write(json.dumps(fuel))
-        textFile.write('\n')
-        start = time.time()
-        board = getBoardMatrix(arrayPuzzle[int(i)-1][0:36])
-        searchPathMoves, searchPath, allStates, closedList = ucs(board, fuel, unique)
-        stop = time.time()
-        if(searchPath[0][2][5]!='A'):
-            textFile.write('no solution')
-        else:
-            textFile.write('solution path: ')
-            textFile.write(solMoveString(searchPathMoves))
-            textFile.write('\n')
-            textFile.write('execution time : ')
-            textFile.write(str(stop-start))
-            textFile.write(' seconds')
-            textFile.write('\n')
-            textFile.write('search path length: ' ) ########################################### doubt
-            textFile.write(str(len(closedList)))
-            textFile.write(' states')
-            textFile.write('\n')
-            textFile.write('solution path length: ')
-            textFile.write(str(len(searchPathMoves)))
-            textFile.write(' moves')
-            textFile.write('\n')
-            textFile.write('\n')
-            printSolPathMovesTextFile(searchPathMoves, searchPath, textFile)
-            #solPathMoves(searchPathMoves, searchPath)
-        textFile.close()
-        printSearchPathTextFile(closedList,i)
-
-#runs the user chosen puzzle form input.txt
-def runChosenPuzzle(): #output will be displayed on the terminals
-    arrayPuzzle = readInput('input')
-    size = len(arrayPuzzle)
-    print('number of puzzles ',size)
-
-    #user chooses puzzle
-    check = False
-    while(check==False):
-        puzzleNumber = input(f'choose puzzle number between 1 and {size} :')
-        if (int(puzzleNumber) > int(size) or int(puzzleNumber) < 1):
-            print('wrong input')
-        else:
-            check=True
-    # find unique, initial fuel 
-    unique= sorted(set(arrayPuzzle[int(puzzleNumber)-1][0:36]))
-    if '.' in unique: unique.remove('.')
-    fuel={}
-    for j in range(len(unique)):
-        fuel[unique[j]]=100
-
-    remaining = arrayPuzzle[int(puzzleNumber)-1][36:len(arrayPuzzle[int(puzzleNumber)-1])].replace(' ','')
-    #print((remaining))
-    if(len(arrayPuzzle[int(puzzleNumber)-1])>36):  #integer value should be until the end of file, or before another english.(we remove space)
-        check= 0
-        while(check<=len(remaining)/2):
-            fuel[remaining[check]]=int(remaining[check+1])
-            check = check+2
-    print(f'initial puzzle is {arrayPuzzle[int(puzzleNumber)-1]}')
-    printPuzzle(arrayPuzzle[int(puzzleNumber)-1][0:36])
-    print('car fuel available ',fuel)
-    start = time.time()
-    board = getBoardMatrix(arrayPuzzle[int(puzzleNumber)-1][0:36])
-    searchPathMoves, searchPath, allStates, closedList = ucs(board, fuel, unique)
-    stop = time.time()
-    if(searchPath[0][2][5]!='A'):
-        print('no solution')
-    else:
-        print('solution path ', solMoveString(searchPathMoves))
-        print('execution time ',stop-start,' seconds')
-        print('search path length',len(closedList), ' states') ########################################### doubt
-        print('solution path length', len(searchPathMoves), ' moves')
-        solPathMoves(searchPathMoves, searchPath)
-
-if __name__ == '__main__':
-    optionFlag= False
-    while(optionFlag==False):
-        runOption = input("Enter 1 to run all puzzle, Enter 2 to select puzzle number to run, Enter 3 to exit: ")
-        if(runOption=='1'):
-            runAllPuzzle()
-            runOption=True
-        elif(runOption=='2'):
-            runChosenPuzzle()
-            runOption = True
-        elif(runOption=='3'):
-            break
-        else:
-            print('Wrong input, Redo options')

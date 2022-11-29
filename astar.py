@@ -446,7 +446,7 @@ def h4(board):#combination of how far A is away from [2][5], vehciles blocking a
     posFromEnd = 5-posy
     return len(set(veh))*5 + posFromEnd
 
-def valet(board):
+def valet(board, unique):
     veh = None
     if(board[2][5]!='.' and board[2][4]!='.' and board[2][5]!='A' and board[2][4]!='A'):
         if(board[2][5]==board[2][4]):
@@ -468,7 +468,7 @@ def nextNode(presentNodeValue, checkerList, unique, heuIndex):
     newNodes=[]
     # create nodes with the new boards
     for i in range(len(boards)):
-        valetBoard = valet(boards[i])
+        valetBoard = valet(boards[i], unique)
         if(heuIndex=='1'):
             obj = informedNode.setinfNode(valetBoard, presentNodeValue, moves[i], int(presentNodeValue.level)+1, fuels[i], h1(boards[i])+ int(presentNodeValue.level)+1 )# heu = heu + (g)level 
         elif(heuIndex=='2'):
@@ -484,13 +484,13 @@ def nextNode(presentNodeValue, checkerList, unique, heuIndex):
 
 def astar(startBoard, fuel, unique, heuIndex):
     if(heuIndex =='1'):
-        initial = informedNode.setinfNode(valet(startBoard), None, 'None', 0, fuel,h1(startBoard))
+        initial = informedNode.setinfNode(valet(startBoard, unique), None, 'None', 0, fuel,h1(startBoard))
     elif(heuIndex=='2'):
-        initial = informedNode.setinfNode(valet(startBoard), None, 'None', 0, fuel,h2(startBoard))
+        initial = informedNode.setinfNode(valet(startBoard, unique), None, 'None', 0, fuel,h2(startBoard))
     elif(heuIndex=='3'):
-        initial = informedNode.setinfNode(valet(startBoard), None, 'None', 0, fuel,h3(startBoard))
+        initial = informedNode.setinfNode(valet(startBoard, unique), None, 'None', 0, fuel,h3(startBoard))
     elif(heuIndex=='4'):
-        initial = informedNode.setinfNode(valet(startBoard), None, 'None', 0, fuel,h4(startBoard))
+        initial = informedNode.setinfNode(valet(startBoard, unique), None, 'None', 0, fuel,h4(startBoard))
      # initial heuristic is just the heuristic cost, as g =0
     solpath=[] 
     checkerList=[]

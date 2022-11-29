@@ -8,7 +8,10 @@ import os.path
 # read input file and store data into data structure
 def readInput(input):# has arrays of puzzle
     valuesArray = []
-    f = open(f"{input}.txt", 'r')
+    folder = './Input'
+    name = f"{input}.txt"
+    path = os.path.join(folder, name)
+    f = open(path,"r")
     for i in f.read().splitlines():
             valuesArray.append(i)
 

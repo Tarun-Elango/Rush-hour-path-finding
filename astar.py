@@ -464,7 +464,7 @@ def valet(board):
     return board
 
 def nextNode(presentNodeValue, checkerList, unique, heuIndex):
-    boards, fuels, moves = computeMove(presentNodeValue.board, presentNodeValue.fuel, checkerList,unique)
+    boards, fuels, moves = computeMove(presentNodeValue.board, presentNodeValue.fuel, checkerList,unique) #get children from presentNodeValue
     newNodes=[]
     # create nodes with the new boards
     for i in range(len(boards)):
@@ -564,10 +564,10 @@ def printSolPathMovesTextFile(searchPathMoves,searchPath, text):
                 text.write('')
         text.write('\n')
 
-def printSearchPathTextFile(closedList, i):
+def printSearchPathTextFile(closedList, i,h):
         #search path result, closedList has all the searched paths
     file = './Output/astar/search files'
-    fileName = f"astar-search-{i}.txt"
+    fileName = f"astar-h{h}-search-{i}.txt"
     pathName = os.path.join(file, fileName)
     searchTextFile = open(pathName,"w+")    
 
@@ -584,11 +584,11 @@ def printSearchPathTextFile(closedList, i):
                 searchTextFile.write('')
         searchTextFile.write('\n')
 
-def runAllPuzzle():
+def runAllPuzzle(h):
     arrayPuzzle = readInput('input') # has all the puzzles
     for i in range(1, len(arrayPuzzle)+1):
         folder = './Output/astar/solution files'
-        name = f"astar-sol-{i}.txt"
+        name = f"astar-h{h}-sol-{i}.txt"
         path = os.path.join(folder, name)
         textFile = open(path,"w+")
         unique= sorted(set(arrayPuzzle[int(i)-1][0:36]))
@@ -613,7 +613,7 @@ def runAllPuzzle():
         textFile.write('\n')
         start = time.time()
         board = boardMatrix(arrayPuzzle[int(i)-1][0:36])
-        searchPathMoves, closedList, searchPath, allStates = astar(board, fuel, unique, '1')
+        searchPathMoves, closedList, searchPath, allStates = astar(board, fuel, unique, str(h))
         stop = time.time()
         if(searchPath[0][2][5]!='A'):
             textFile.write('no solution')
@@ -636,14 +636,15 @@ def runAllPuzzle():
             printSolPathMovesTextFile(searchPathMoves, searchPath, textFile)
             #solPathMoves(searchPathMoves, searchPath)
         textFile.close()
-        printSearchPathTextFile(closedList,i)
+        printSearchPathTextFile(closedList,i,h)
 
 if __name__ == '__main__':
     optionFlag= False
     while(optionFlag==False):
         runOption = input("Enter 1 to run all puzzle, Enter 2 to exit: ")
         if(runOption=='1'):
-            runAllPuzzle()
+            for h in range(1,5):
+                runAllPuzzle(h)
             runOption=True
         #elif(runOption=='2'):
         ##    runChosenPuzzle()

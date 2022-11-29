@@ -777,17 +777,27 @@ def nextNode(presentNodeValue, checkerList, unique, heuIndex):
     for i in range(len(boards)):
         # condition to check if board already visited 
         valetBoard = valet(boards[i], unique)
-
-        obj = informedNode.setinfNode(valetBoard, presentNodeValue, moves[i], int(presentNodeValue.level)+1, fuels[i], h1(boards[i]))# heu = heu 
-      
+        if(heuIndex=='1'):
+            obj = informedNode.setinfNode(valetBoard, presentNodeValue, moves[i], int(presentNodeValue.level)+1, fuels[i], h1(boards[i]))# heu = heu 
+        elif(heuIndex=='2'):
+            obj = informedNode.setinfNode(valetBoard, presentNodeValue, moves[i], int(presentNodeValue.level)+1, fuels[i], h2(boards[i]))# heu = heu 
+        elif(heuIndex=='3'):
+            obj = informedNode.setinfNode(valetBoard, presentNodeValue, moves[i], int(presentNodeValue.level)+1, fuels[i], h3(boards[i]))# heu = heu 
+        elif(heuIndex=='4'):
+            obj = informedNode.setinfNode(valetBoard, presentNodeValue, moves[i], int(presentNodeValue.level)+1, fuels[i], h4(boards[i]))# heu = heu         
         newNodes.append(obj)
 
     return newNodes
 
 def gbfs(startBoard, fuel, unique, heuIndex): 
-
-    initial = informedNode.setinfNode(valet(startBoard, unique), None, 'None', 0, fuel, h1(startBoard))
-
+    if(heuIndex =='1'):
+        initial = informedNode.setinfNode(valet(startBoard, unique), None, 'None', 0, fuel, h1(startBoard))
+    elif(heuIndex=='2'):
+        initial = informedNode.setinfNode(valet(startBoard, unique), None, 'None', 0, fuel, h2(startBoard))
+    elif(heuIndex=='3'):
+        initial = informedNode.setinfNode(valet(startBoard, unique), None, 'None', 0, fuel, h3(startBoard))
+    elif(heuIndex=='4'):
+        initial = informedNode.setinfNode(valet(startBoard, unique), None, 'None', 0, fuel, h4(startBoard))
     openList=[] 
     checkerList=[]
     closedList=[]
@@ -926,68 +936,68 @@ def runChosenPuzzle():
         print('solution path length', len(searchPathMoves), ' moves')
         solPathMoves(searchPathMoves, searchPath)
 
-def runAllPuzzle():
+def runAllPuzzle(h):
     arrayPuzzle = readInput('input') # has all the puzzles
     
     for i in range(1, len(arrayPuzzle)+1):
-        for h in (1,5):
-            folder = './Output/gbfs/solution files'
-            name = f"gbfs-h{h}-sol-{i}.txt"
-            path = os.path.join(folder, name)
-            textFile = open(path,"w+")
-            unique= sorted(set(arrayPuzzle[int(i)-1][0:36]))
-            if '.' in unique: unique.remove('.')
-            fuel={}
-            for j in range(len(unique)):
-                fuel[unique[j]]=100
-            remaining = arrayPuzzle[int(i)-1][36:len(arrayPuzzle[int(i)-1])].replace(' ','')
-            #print((remaining))s
-            if(len(arrayPuzzle[int(i)-1])>36):  #integer value should be until the end of file, or before another english.(we remove space)
-                check= 0
-                while(check<=len(remaining)/2):
-                    fuel[remaining[check]]=int(remaining[check+1])
-                    check = check+2
-            textFile.write(f'initial puzzle is {arrayPuzzle[int(i)-1]}')
-            textFile.write('\n\n')
-            printPuzzleTextFile(arrayPuzzle[int(i)-1][0:36], textFile)
-            textFile.write('\n\n')
-            #print('car fuel available ',fuel)
-            textFile.write('car fuel available: ')
-            textFile.write(json.dumps(fuel))
+        folder = './Output/gbfs/solution files'
+        name = f"gbfs-h{h}-sol-{i}.txt"
+        path = os.path.join(folder, name)
+        textFile = open(path,"w+")
+        unique= sorted(set(arrayPuzzle[int(i)-1][0:36]))
+        if '.' in unique: unique.remove('.')
+        fuel={}
+        for j in range(len(unique)):
+            fuel[unique[j]]=100
+        remaining = arrayPuzzle[int(i)-1][36:len(arrayPuzzle[int(i)-1])].replace(' ','')
+        #print((remaining))s
+        if(len(arrayPuzzle[int(i)-1])>36):  #integer value should be until the end of file, or before another english.(we remove space)
+            check= 0
+            while(check<=len(remaining)/2):
+                fuel[remaining[check]]=int(remaining[check+1])
+                check = check+2
+        textFile.write(f'initial puzzle is {arrayPuzzle[int(i)-1]}')
+        textFile.write('\n\n')
+        printPuzzleTextFile(arrayPuzzle[int(i)-1][0:36], textFile)
+        textFile.write('\n\n')
+        #print('car fuel available ',fuel)
+        textFile.write('car fuel available: ')
+        textFile.write(json.dumps(fuel))
+        textFile.write('\n')
+        start = time.time()
+        board = boardMatrix(arrayPuzzle[int(i)-1][0:36])
+        searchPathMoves, closedList, searchPath, allStates = gbfs(board, fuel, unique, str(h))
+        stop = time.time()
+        if(searchPath[0][2][5]!='A'):
+            textFile.write('no solution')
+        else:
+            textFile.write('solution path: ')
+            textFile.write(solMoveString(searchPathMoves))
             textFile.write('\n')
-            start = time.time()
-            board = boardMatrix(arrayPuzzle[int(i)-1][0:36])
-            searchPathMoves, closedList, searchPath, allStates = gbfs(board, fuel, unique, str(h))
-            stop = time.time()
-            if(searchPath[0][2][5]!='A'):
-                textFile.write('no solution')
-            else:
-                textFile.write('solution path: ')
-                textFile.write(solMoveString(searchPathMoves))
-                textFile.write('\n')
-                textFile.write('execution time : ')
-                textFile.write(str(stop-start))
-                textFile.write(' seconds')
-                textFile.write('\n')
-                textFile.write('search path length: ' ) # all the states have been assigned  g(n)
-                textFile.write(str(len(allStates)))
-                textFile.write(' states')
-                textFile.write('\n')
-                textFile.write('solution path length: ')
-                textFile.write(str(len(searchPathMoves)))
-                textFile.write(' moves')
-                textFile.write('\n\n')
-                printSolPathMovesTextFile(searchPathMoves, searchPath, textFile)
-                #solPathMoves(searchPathMoves, searchPath)
-            textFile.close()
-            printSearchPathTextFile(closedList,i, h)
+            textFile.write('execution time : ')
+            textFile.write(str(stop-start))
+            textFile.write(' seconds')
+            textFile.write('\n')
+            textFile.write('search path length: ' ) # all the states have been assigned  g(n)
+            textFile.write(str(len(allStates)))
+            textFile.write(' states')
+            textFile.write('\n')
+            textFile.write('solution path length: ')
+            textFile.write(str(len(searchPathMoves)))
+            textFile.write(' moves')
+            textFile.write('\n\n')
+            printSolPathMovesTextFile(searchPathMoves, searchPath, textFile)
+            #solPathMoves(searchPathMoves, searchPath)
+        textFile.close()
+        printSearchPathTextFile(closedList,i, h)
 
 if __name__ == '__main__':
     optionFlag= False
     while(optionFlag==False):
         runOption = input("Enter 1 to run all puzzle, Enter 2 to exit: ")
         if(runOption=='1'):
-            runAllPuzzle()
+            for h in range(1,5):
+                runAllPuzzle(h)
             runOption=True
         #elif(runOption=='2'):
         ##    runChosenPuzzle()

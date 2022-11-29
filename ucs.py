@@ -575,8 +575,8 @@ def runAllPuzzle(): # will not disply on terminal, output in the text files
             textFile.write(str(stop-start))
             textFile.write(' seconds')
             textFile.write('\n')
-            textFile.write('search path length: ' ) ########################################### doubt
-            textFile.write(str(len(closedList)))
+            textFile.write('search path length: ' ) # all the states have been assigned  g(n)
+            textFile.write(str(len(allStates)))
             textFile.write(' states')
             textFile.write('\n')
             textFile.write('solution path length: ')
@@ -628,7 +628,7 @@ def runChosenPuzzle(): #output will be displayed on the terminals
     else:
         print('solution path ', solMoveString(searchPathMoves))
         print('execution time ',stop-start,' seconds')
-        print('search path length',len(closedList), ' states') ########################################### doubt
+        print('search path length',len(allStates), ' states') # all the states have been assigned  g(n)
         print('solution path length', len(searchPathMoves), ' moves')
         solPathMoves(searchPathMoves, searchPath)
 

@@ -495,7 +495,6 @@ def astar(startBoard, fuel, unique, heuIndex):
     solpath=[] 
     checkerList=[]
     closedList=[]
-    count =1
     solpath.append(initial) # equivalent to open list, i.e. the next node to expand is from this list
     checkerList.append(initial) #equivalent to closed list, has all the list that have been visited
     present = solpath.pop(0) 
@@ -506,7 +505,6 @@ def astar(startBoard, fuel, unique, heuIndex):
         for i in next_nodes:    
             solpath.append(i)
             checkerList.append(i)
-            count = count+1 
         if(len(solpath)==0):
             break
         else:
@@ -584,8 +582,17 @@ def printSearchPathTextFile(closedList, i,h):
                 searchTextFile.write('')
         searchTextFile.write('\n')
 
+def printDetailsExcel(solLength, searchLength, exeTIme):
+    # each is a list print one by one and add to csv file, manually
+    print(*solLength)
+    print(*searchLength)
+    print(*exeTIme)
+
 def runAllPuzzle(h):
     arrayPuzzle = readInput('input') # has all the puzzles
+    solExcel = [] 
+    searchExcel= []
+    exeExcel =[]
     for i in range(1, len(arrayPuzzle)+1):
         folder = './Output/astar/solution files'
         name = f"astar-h{h}-sol-{i}.txt"
@@ -618,9 +625,6 @@ def runAllPuzzle(h):
         if(searchPath[0][2][5]!='A'):
             textFile.write('no solution')
         else:
-            textFile.write('solution path: ')
-            textFile.write(solMoveString(searchPathMoves))
-            textFile.write('\n')
             textFile.write('execution time : ')
             textFile.write(str(stop-start))
             textFile.write(' seconds')
@@ -632,11 +636,19 @@ def runAllPuzzle(h):
             textFile.write('solution path length: ')
             textFile.write(str(len(searchPathMoves)))
             textFile.write(' moves')
+            textFile.write('\n')
+            textFile.write('solution path: ')
+            textFile.write(solMoveString(searchPathMoves))
             textFile.write('\n\n')
             printSolPathMovesTextFile(searchPathMoves, searchPath, textFile)
             #solPathMoves(searchPathMoves, searchPath)
         textFile.close()
         printSearchPathTextFile(closedList,i,h)
+        solExcel.append(len(searchPathMoves))
+        searchExcel.append(len(allStates))
+        exeExcel.append(stop-start)
+    
+    printDetailsExcel(solExcel, searchExcel, exeExcel)
 
 if __name__ == '__main__':
     optionFlag= False

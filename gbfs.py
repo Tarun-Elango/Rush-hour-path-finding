@@ -629,9 +629,17 @@ def runChosenPuzzle():
         print('solution path length', len(searchPathMoves), ' moves')
         solPathMoves(searchPathMoves, searchPath)
 
+def printDetailsExcel(solLength, searchLength, exeTIme):
+    # each is a list print one by one and add to csv file, manually
+    print(*solLength)
+    print(*searchLength)
+    print(*exeTIme)
+
 def runAllPuzzle(h):
     arrayPuzzle = readInput('input') # has all the puzzles
-    
+    solExcel = [] 
+    searchExcel= []
+    exeExcel =[]
     for i in range(1, len(arrayPuzzle)+1):
         folder = './Output/gbfs/solution files'
         name = f"gbfs-h{h}-sol-{i}.txt"
@@ -664,9 +672,6 @@ def runAllPuzzle(h):
         if(searchPath[0][2][5]!='A'):
             textFile.write('no solution')
         else:
-            textFile.write('solution path: ')
-            textFile.write(solMoveString(searchPathMoves))
-            textFile.write('\n')
             textFile.write('execution time : ')
             textFile.write(str(stop-start))
             textFile.write(' seconds')
@@ -678,11 +683,19 @@ def runAllPuzzle(h):
             textFile.write('solution path length: ')
             textFile.write(str(len(searchPathMoves)))
             textFile.write(' moves')
+            textFile.write('\n')
+            textFile.write('solution path: ')
+            textFile.write(solMoveString(searchPathMoves))
             textFile.write('\n\n')
             printSolPathMovesTextFile(searchPathMoves, searchPath, textFile)
             #solPathMoves(searchPathMoves, searchPath)
         textFile.close()
         printSearchPathTextFile(closedList,i, h)
+        solExcel.append(len(searchPathMoves))
+        searchExcel.append(len(allStates))
+        exeExcel.append(stop-start)
+    
+    printDetailsExcel(solExcel, searchExcel, exeExcel)
 
 if __name__ == '__main__':
     optionFlag= False

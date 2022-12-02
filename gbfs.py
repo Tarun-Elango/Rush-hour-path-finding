@@ -573,9 +573,9 @@ def printSearchPathTextFile(closedList, i,h):
     for p in closedList:
         searchTextFile.write(str(p.heu))
         searchTextFile.write(' ')
-        searchTextFile.write(str(p.level))
+        searchTextFile.write(0)
         searchTextFile.write(' ')
-        searchTextFile.write(str(p.heu - p.level))
+        searchTextFile.write(str(p.heu))
         searchTextFile.write(' ')
         for k in range(6):
             for j in range(6):
@@ -671,6 +671,9 @@ def runAllPuzzle(h):
         stop = time.time()
         if(searchPath[0][2][5]!='A'):
             textFile.write('no solution')
+            solExcel.append('NA')
+            searchExcel.append('NA')
+            exeExcel.append('NA')
         else:
             textFile.write('execution time : ')
             textFile.write(str(stop-start))
@@ -688,12 +691,13 @@ def runAllPuzzle(h):
             textFile.write(solMoveString(searchPathMoves))
             textFile.write('\n\n')
             printSolPathMovesTextFile(searchPathMoves, searchPath, textFile)
+            solExcel.append(len(searchPathMoves))
+            searchExcel.append(len(allStates))
+            exeExcel.append(stop-start)
             #solPathMoves(searchPathMoves, searchPath)
         textFile.close()
         printSearchPathTextFile(closedList,i, h)
-        solExcel.append(len(searchPathMoves))
-        searchExcel.append(len(allStates))
-        exeExcel.append(stop-start)
+        
     
     printDetailsExcel(solExcel, searchExcel, exeExcel)
 

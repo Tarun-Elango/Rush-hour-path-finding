@@ -482,7 +482,7 @@ def nextNode(presentNodeValue, checkerList, unique, heuIndex):
 
     return newNodes
 
-def astar(startBoard, fuel, unique, heuIndex):
+def aFunc(startBoard, fuel, unique, heuIndex):
     if(heuIndex =='1'):
         initial = informedNode.setinfNode(valet(startBoard, unique), None, 'None', 0, fuel,h1(startBoard))
     elif(heuIndex=='2'):
@@ -564,8 +564,8 @@ def printSolPathMovesTextFile(searchPathMoves,searchPath, text):
 
 def printSearchPathTextFile(closedList, i,h):
         #search path result, closedList has all the searched paths
-    file = './Output/astar/search files'
-    fileName = f"astar-h{h}-search-{i}.txt"
+    file = './Output/a/search files'
+    fileName = f"a-h{h}-search-{i}.txt"
     pathName = os.path.join(file, fileName)
     searchTextFile = open(pathName,"w+")    
 
@@ -594,8 +594,8 @@ def runAllPuzzle(h):
     searchExcel= []
     exeExcel =[]
     for i in range(1, len(arrayPuzzle)+1):
-        folder = './Output/astar/solution files'
-        name = f"astar-h{h}-sol-{i}.txt"
+        folder = './Output/a/solution files'
+        name = f"a-h{h}-sol-{i}.txt"
         path = os.path.join(folder, name)
         textFile = open(path,"w+")
         unique= sorted(set(arrayPuzzle[int(i)-1][0:36]))
@@ -620,10 +620,13 @@ def runAllPuzzle(h):
         textFile.write('\n')
         start = time.time()
         board = boardMatrix(arrayPuzzle[int(i)-1][0:36])
-        searchPathMoves, closedList, searchPath, allStates = astar(board, fuel, unique, str(h))
+        searchPathMoves, closedList, searchPath, allStates = aFunc(board, fuel, unique, str(h))
         stop = time.time()
         if(searchPath[0][2][5]!='A'):
             textFile.write('no solution')
+            solExcel.append('NA')
+            searchExcel.append('NA')
+            exeExcel.append('NA')
         else:
             textFile.write('execution time : ')
             textFile.write(str(stop-start))
@@ -641,12 +644,12 @@ def runAllPuzzle(h):
             textFile.write(solMoveString(searchPathMoves))
             textFile.write('\n\n')
             printSolPathMovesTextFile(searchPathMoves, searchPath, textFile)
+            solExcel.append(len(searchPathMoves))
+            searchExcel.append(len(allStates))
+            exeExcel.append(stop-start)
             #solPathMoves(searchPathMoves, searchPath)
         textFile.close()
         printSearchPathTextFile(closedList,i,h)
-        solExcel.append(len(searchPathMoves))
-        searchExcel.append(len(allStates))
-        exeExcel.append(stop-start)
     
     printDetailsExcel(solExcel, searchExcel, exeExcel)
 

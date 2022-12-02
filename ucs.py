@@ -455,6 +455,7 @@ def ucs(startBoard, fuel, unique):
         if(len(openList)==0): # at this stage if the openlist is empty, i.e all possible nodes have been visited, then break
             break
         else:
+            openList.sort(key=lambda x: x.cost, reverse=False) #order of the open list is chosen to be ascending lowest cost to highest
             present = openList.pop(0)  # remove the first node from open list for next iteration 
             closedList.append(present) # add all the eplored nodes to 
 
@@ -579,6 +580,9 @@ def runAllPuzzle(): # will not disply on terminal, output in the text files
         stop = time.time()
         if(searchPath[0][2][5]!='A'):
             textFile.write('no solution')
+            solExcel.append('NA')
+            searchExcel.append('NA')
+            exeExcel.append('NA')
         else:
             textFile.write('execution time : ')
             textFile.write(str(stop-start))
@@ -591,17 +595,19 @@ def runAllPuzzle(): # will not disply on terminal, output in the text files
             textFile.write('solution path length: ')
             textFile.write(str(len(searchPathMoves)))
             textFile.write(' moves')
+            textFile.write('\n')
             textFile.write('solution path: ')
             textFile.write(solMoveString(searchPathMoves))
             textFile.write('\n')
             textFile.write('\n\n')
             printSolPathMovesTextFile(searchPathMoves, searchPath, textFile)
+            solExcel.append(len(searchPathMoves))
+            searchExcel.append(len(allStates))
+            exeExcel.append(stop-start)
             #solPathMoves(searchPathMoves, searchPath)
         textFile.close()
         printSearchPathTextFile(closedList,i)
-        solExcel.append(len(searchPathMoves))
-        searchExcel.append(len(allStates))
-        exeExcel.append(stop-start)
+        
     
     printDetailsExcel(solExcel, searchExcel, exeExcel)
 

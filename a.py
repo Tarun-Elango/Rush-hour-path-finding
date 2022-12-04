@@ -605,14 +605,16 @@ def runAllPuzzle(h):
         for j in range(len(unique)):
             fuel[unique[j]]=100
         remaining = arrayPuzzle[int(i)-1][36:len(arrayPuzzle[int(i)-1])]
-        splits = remaining.split()
-        for i in range(len(splits)):
-            fuel[splits[i][0]]=int(splits[i][1:len(splits[i])])
+        if(len(arrayPuzzle[int(i)-1])>36):
+            splits = remaining.split()
+            for j in range(len(splits)):
+                fuel[splits[j][0]]=int(splits[j][1:len(splits[j])])
         textFile.write(f'initial puzzle is {arrayPuzzle[int(i)-1]}')
         textFile.write('\n\n')
+        printPuzzle(arrayPuzzle[int(i)-1][0:36])
         printPuzzleTextFile(arrayPuzzle[int(i)-1][0:36], textFile)
         textFile.write('\n\n')
-        print('car fuel available ',fuel)
+        #print('car fuel available ',fuel)
         textFile.write('car fuel available: ')
         textFile.write(json.dumps(fuel))
         textFile.write('\n')
@@ -649,7 +651,7 @@ def runAllPuzzle(h):
         textFile.close()
         printSearchPathTextFile(closedList,i,h)
     
-    printDetailsExcel(solExcel, searchExcel, exeExcel)
+    #printDetailsExcel(solExcel, searchExcel, exeExcel)
 
 #main
 if __name__ == '__main__':

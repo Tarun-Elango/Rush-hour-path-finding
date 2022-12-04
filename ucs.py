@@ -533,9 +533,10 @@ def runAllPuzzle(): # will not disply on terminal, output in the text files
         for j in range(len(unique)):
             fuel[unique[j]]=100
         remaining = arrayPuzzle[int(i)-1][36:len(arrayPuzzle[int(i)-1])]
-        splits = remaining.split()
-        for i in range(len(splits)):
-            fuel[splits[i][0]]=int(splits[i][1:len(splits[i])])
+        if(len(arrayPuzzle[int(i)-1])>36):
+            splits = remaining.split()
+            for j in range(len(splits)):
+                fuel[splits[j][0]]=int(splits[j][1:len(splits[j])])
         print(f'initial puzzle is {arrayPuzzle[int(i)-1]}')
         textFile.write(f'initial puzzle is {arrayPuzzle[int(i)-1]}')
         textFile.write('\n\n')
@@ -580,7 +581,6 @@ def runAllPuzzle(): # will not disply on terminal, output in the text files
         textFile.close()
         printSearchPathTextFile(closedList,i)
         
-    
     #printDetailsExcel(solExcel, searchExcel, exeExcel)
 
 #runs the user chosen puzzle form input.txt
@@ -605,9 +605,10 @@ def runChosenPuzzle(): #output will be displayed on the terminals
         fuel[unique[j]]=100
 
     remaining = arrayPuzzle[int(puzzleNumber)-1][36:len(arrayPuzzle[int(puzzleNumber)-1])]
-    splits = remaining.split()
-    for i in range(len(splits)):
-        fuel[splits[i][0]]=int(splits[i][1:len(splits[i])])
+    if(len(arrayPuzzle[int(puzzleNumber)-1])>36):
+        splits = remaining.split()
+        for j in range(len(splits)):
+            fuel[splits[j][0]]=int(splits[j][1:len(splits[j])])
     print(f'initial puzzle is {arrayPuzzle[int(puzzleNumber)-1]}')
     printPuzzle(arrayPuzzle[int(puzzleNumber)-1][0:36])
     print('car fuel available ',fuel)

@@ -18,7 +18,7 @@ To run an algorithm <br />
 cd into 472-Code-40084007 <br />
 cd into Code <br />
 
-Run ucs.py or gbfs.py or a.py to run the respective algorithms </br />
+Run ucs.py or gbfs.py or a.py to run the respective algorithms </br >
 
 output can be seen in the output folder
 

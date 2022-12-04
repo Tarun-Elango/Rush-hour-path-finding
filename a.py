@@ -604,18 +604,15 @@ def runAllPuzzle(h):
         fuel={}
         for j in range(len(unique)):
             fuel[unique[j]]=100
-        remaining = arrayPuzzle[int(i)-1][36:len(arrayPuzzle[int(i)-1])].replace(' ','')
-        #print((remaining))s
-        if(len(arrayPuzzle[int(i)-1])>36):  #integer value should be until the end of file, or before another english.(we remove space)
-            check= 0
-            while(check<=len(remaining)/2):
-                fuel[remaining[check]]=int(remaining[check+1])
-                check = check+2
+        remaining = arrayPuzzle[int(i)-1][36:len(arrayPuzzle[int(i)-1])]
+        splits = remaining.split()
+        for i in range(len(splits)):
+            fuel[splits[i][0]]=int(splits[i][1:len(splits[i])])
         textFile.write(f'initial puzzle is {arrayPuzzle[int(i)-1]}')
         textFile.write('\n\n')
         printPuzzleTextFile(arrayPuzzle[int(i)-1][0:36], textFile)
         textFile.write('\n\n')
-        #print('car fuel available ',fuel)
+        print('car fuel available ',fuel)
         textFile.write('car fuel available: ')
         textFile.write(json.dumps(fuel))
         textFile.write('\n')

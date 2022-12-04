@@ -375,7 +375,6 @@ def computeMoves(board, fuel, checkerList,unique):
                         fuelList.append(tempFuel) 
                 else:
                     check=True
-
     return boardList, fuelList, movelist
 
 # remove any vehicle at the exit
@@ -533,13 +532,10 @@ def runAllPuzzle(): # will not disply on terminal, output in the text files
         fuel={}
         for j in range(len(unique)):
             fuel[unique[j]]=100
-        remaining = arrayPuzzle[int(i)-1][36:len(arrayPuzzle[int(i)-1])].replace(' ','')
-        #print((remaining))s
-        if(len(arrayPuzzle[int(i)-1])>36):  #integer value should be until the end of file, or before another english.(we remove space)
-            check= 0
-            while(check<=len(remaining)/2):
-                fuel[remaining[check]]=int(remaining[check+1])
-                check = check+2
+        remaining = arrayPuzzle[int(i)-1][36:len(arrayPuzzle[int(i)-1])]
+        splits = remaining.split()
+        for i in range(len(splits)):
+            fuel[splits[i][0]]=int(splits[i][1:len(splits[i])])
         print(f'initial puzzle is {arrayPuzzle[int(i)-1]}')
         textFile.write(f'initial puzzle is {arrayPuzzle[int(i)-1]}')
         textFile.write('\n\n')
@@ -608,13 +604,10 @@ def runChosenPuzzle(): #output will be displayed on the terminals
     for j in range(len(unique)):
         fuel[unique[j]]=100
 
-    remaining = arrayPuzzle[int(puzzleNumber)-1][36:len(arrayPuzzle[int(puzzleNumber)-1])].replace(' ','')
-    #print((remaining))
-    if(len(arrayPuzzle[int(puzzleNumber)-1])>36):  #integer value should be until the end of file, or before another english.(we remove space)
-        check= 0
-        while(check<=len(remaining)/2):
-            fuel[remaining[check]]=int(remaining[check+1])
-            check = check+2
+    remaining = arrayPuzzle[int(puzzleNumber)-1][36:len(arrayPuzzle[int(puzzleNumber)-1])]
+    splits = remaining.split()
+    for i in range(len(splits)):
+        fuel[splits[i][0]]=int(splits[i][1:len(splits[i])])
     print(f'initial puzzle is {arrayPuzzle[int(puzzleNumber)-1]}')
     printPuzzle(arrayPuzzle[int(puzzleNumber)-1][0:36])
     print('car fuel available ',fuel)

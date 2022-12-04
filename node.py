@@ -1,3 +1,4 @@
+# node class for UCS
 class node:
     def __init__(self, board,  previous, move, level, fuel, cost):
         self.board = board # the board

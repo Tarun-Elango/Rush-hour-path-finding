@@ -93,20 +93,16 @@ def defineCar(board, unique):
 #compute all possible moves for a given board
 def computeMoves(board, fuel, checkerList,unique): 
     boards=[]#contains all the boards that have already been passed
-    for i in checkerList:
-        boards.append(i.board)
+    for i in checkerList: 
+        boards.append(i.board) # needed to check for repeat nodes
     boardList = [] 
     movelist = [] 
     fuelList= [] 
-    carlist = defineCar(board, unique) #this list has all the cars for the given board
+    carlist = defineCar(board, unique) 
 
-    # give the board, get the car
-    #consider boards visited, fuel
-    #length 2
     #all left possible moves 
     for i in carlist:
         if( fuel[f'{i.letter}'] >0  and i.orientation=='horizontal'):
-            #for loop 1 to 4, check if for
             check=False
             for j in range (1,5):
                 if((i.length==2) and (i.posy[0]-j)>=0 and (board[i.posx[0]][i.posy[0]-j]=='.')  and check==False):
@@ -120,7 +116,6 @@ def computeMoves(board, fuel, checkerList,unique):
                     tempFuel = copy.deepcopy(fuel)
                     fl = int(tempFuel[f'{i.letter}']-j)
                     tempFuel[f'{i.letter}'] = fl 
-                    #add the moves, fuel, board for each different moves
                     if(temp in boards)==False:
                         boardList.append(temp)
                         movelist.append(move)
@@ -139,7 +134,6 @@ def computeMoves(board, fuel, checkerList,unique):
                     tempFuel = copy.deepcopy(fuel)
                     fl = int(tempFuel[f'{i.letter}']-j)
                     tempFuel[f'{i.letter}'] = fl 
-                    #add the moves, fuel, board for each different moves
                     if(temp in boards)==False:
                         boardList.append(temp)
                         movelist.append(move)
@@ -155,7 +149,6 @@ def computeMoves(board, fuel, checkerList,unique):
                     tempFuel = copy.deepcopy(fuel)
                     fl = int(tempFuel[f'{i.letter}']-j)
                     tempFuel[f'{i.letter}'] = fl 
-                    #add the moves, fuel, board for each different moves
                     if(temp in boards)==False:
                         boardList.append(temp)
                         movelist.append(move)
@@ -169,15 +162,13 @@ def computeMoves(board, fuel, checkerList,unique):
                     tempFuel = copy.deepcopy(fuel)
                     fl = int(tempFuel[f'{i.letter}']-j)
                     tempFuel[f'{i.letter}'] = fl 
-                    #add the moves, fuel, board for each different moves
                     if(temp in boards)==False:
                         boardList.append(temp)
                         movelist.append(move)
                         fuelList.append(tempFuel)
                 else:
                     check=True
-                
-
+            
     #all ritgh possible moves 
     for i in carlist:
         if(fuel[f'{i.letter}'] >0  and i.orientation=='horizontal'):
@@ -194,7 +185,6 @@ def computeMoves(board, fuel, checkerList,unique):
                     tempFuel = copy.deepcopy(fuel)
                     fl = int(tempFuel[f'{i.letter}']-j)
                     tempFuel[f'{i.letter}'] = fl 
-                    #add the moves, fuel, board for each different moves
                     if(temp in boards)==False:
                         boardList.append(temp)
                         movelist.append(move)
@@ -213,7 +203,6 @@ def computeMoves(board, fuel, checkerList,unique):
                     tempFuel = copy.deepcopy(fuel)
                     fl = int(tempFuel[f'{i.letter}']-j)
                     tempFuel[f'{i.letter}'] = fl 
-                    #add the moves, fuel, board for each different moves
                     if(temp in boards)==False:
                         boardList.append(temp)
                         movelist.append(move)
@@ -229,7 +218,6 @@ def computeMoves(board, fuel, checkerList,unique):
                     tempFuel = copy.deepcopy(fuel)
                     fl = int(tempFuel[f'{i.letter}']-j)
                     tempFuel[f'{i.letter}'] = fl 
-                    #add the moves, fuel, board for each different moves
                     if(temp in boards)==False:
                         boardList.append(temp)
                         movelist.append(move)
@@ -243,7 +231,6 @@ def computeMoves(board, fuel, checkerList,unique):
                     tempFuel = copy.deepcopy(fuel)
                     fl = int(tempFuel[f'{i.letter}']-j)
                     tempFuel[f'{i.letter}'] = fl 
-                    #add the moves, fuel, board for each different moves
                     if(temp in boards)==False:
                         boardList.append(temp)
                         movelist.append(move)
@@ -267,7 +254,6 @@ def computeMoves(board, fuel, checkerList,unique):
                     tempFuel = copy.deepcopy(fuel)
                     fl = int(tempFuel[f'{i.letter}']-j)
                     tempFuel[f'{i.letter}'] = fl 
-                    #add the moves, fuel, board for each different moves
                     if(temp in boards)==False:
                         boardList.append(temp)
                         movelist.append(move)
@@ -286,7 +272,6 @@ def computeMoves(board, fuel, checkerList,unique):
                     tempFuel = copy.deepcopy(fuel)
                     fl = int(tempFuel[f'{i.letter}']-j)
                     tempFuel[f'{i.letter}'] = fl 
-                    #add the moves, fuel, board for each different moves
                     if(temp in boards)==False:
                         boardList.append(temp)
                         movelist.append(move)
@@ -302,7 +287,6 @@ def computeMoves(board, fuel, checkerList,unique):
                     tempFuel = copy.deepcopy(fuel)
                     fl = int(tempFuel[f'{i.letter}']-j)
                     tempFuel[f'{i.letter}'] = fl 
-                    #add the moves, fuel, board for each different moves
                     if(temp in boards)==False:
                         boardList.append(temp)
                         movelist.append(move)
@@ -316,7 +300,6 @@ def computeMoves(board, fuel, checkerList,unique):
                     tempFuel = copy.deepcopy(fuel)
                     fl = int(tempFuel[f'{i.letter}']-j)
                     tempFuel[f'{i.letter}'] = fl 
-                    #add the moves, fuel, board for each different moves
                     if(temp in boards)==False:
                         boardList.append(temp)
                         movelist.append(move)
@@ -340,7 +323,6 @@ def computeMoves(board, fuel, checkerList,unique):
                     tempFuel = copy.deepcopy(fuel)
                     fl = int(tempFuel[f'{i.letter}']-j)
                     tempFuel[f'{i.letter}'] = fl 
-                    #add the moves, fuel, board for each different moves
                     if(temp in boards)==False:
                         boardList.append(temp)
                         movelist.append(move)
@@ -359,7 +341,6 @@ def computeMoves(board, fuel, checkerList,unique):
                     tempFuel = copy.deepcopy(fuel)
                     fl = int(tempFuel[f'{i.letter}']-j)
                     tempFuel[f'{i.letter}'] = fl 
-                    #add the moves, fuel, board for each different moves
                     if(temp in boards)==False:
                         boardList.append(temp)
                         movelist.append(move)
@@ -375,7 +356,6 @@ def computeMoves(board, fuel, checkerList,unique):
                     tempFuel = copy.deepcopy(fuel)
                     fl = int(tempFuel[f'{i.letter}']-j)
                     tempFuel[f'{i.letter}'] = fl 
-                    #add the moves, fuel, board for each different moves
                     if(temp in boards)==False:
                         boardList.append(temp)
                         movelist.append(move)
@@ -389,7 +369,6 @@ def computeMoves(board, fuel, checkerList,unique):
                     tempFuel = copy.deepcopy(fuel)
                     fl = int(tempFuel[f'{i.letter}']-j)
                     tempFuel[f'{i.letter}'] = fl 
-                    #add the moves, fuel, board for each different moves
                     if(temp in boards)==False:
                         boardList.append(temp)
                         movelist.append(move)

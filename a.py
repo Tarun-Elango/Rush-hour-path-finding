@@ -14,16 +14,15 @@ def readInput(input):
     f = open(path,"r")
     for i in f.read().splitlines():
             valuesArray.append(i)
-
     newArray=[]
     for j in range(len(valuesArray)):
         if(valuesArray[j]=='' or valuesArray[j].startswith('#')):
             continue
         else:
             newArray.append(valuesArray[j])
-
     return newArray
 
+# print puzzle 
 def printPuzzle(array):
     for i in range(0,len(array)):
         if(i%6==5):
@@ -31,6 +30,7 @@ def printPuzzle(array):
         else:
             print(array[i], end =" "),
 
+#print puzzle text file
 def printPuzzleTextFile(array, text):
         for i in range(0,len(array)):
             if(i%6==5):
@@ -55,6 +55,7 @@ def boardMatrix(input):
 
     return board
 
+#function to output the orientation of a car in a given board
 def orientation(board,i):
     lt =[]
     for k in range(6):
@@ -88,22 +89,20 @@ def defCar(board, unique):
         cars.append(obj)
     return cars # set of car objects
 
-def computeMove(board, fuel, checkerList, unique): #board has the current nodes board, fuel has the current nodes fuel, checkerList has all the nodes visited
-    boards=[]#contains all the boards that have already been passed
+#find all possible moves for given board, 
+def computeMove(board, fuel, checkerList, unique): 
+    #board has the current nodes board, fuel has the current nodes fuel, checkerList has all the nodes visited
+    boards=[]#contains all the boards that have already been passed, need to check and compare for repeat nodes
     for i in checkerList:
         boards.append(i.board)
     boardList = [] 
     movelist = [] 
     fuelList= [] 
-    carlist = defCar(board, unique) #this list has all the cars for the given board
+    carlist = defCar(board, unique)
 
-    # give the board, get the car
-    #consider boards visited, fuel
-    #length 2
     #all left possible moves 
     for i in carlist:
         if( fuel[f'{i.letter}'] >0  and i.orientation=='horizontal'):
-            #for loop 1 to 4, check if for
             check=False
             for j in range (1,5):
                 if((i.length==2) and (i.posy[0]-j)>=0 and (board[i.posx[0]][i.posy[0]-j]=='.')  and check==False):
@@ -117,7 +116,6 @@ def computeMove(board, fuel, checkerList, unique): #board has the current nodes 
                     tempFuel = copy.deepcopy(fuel)
                     fl = int(tempFuel[f'{i.letter}']-j)
                     tempFuel[f'{i.letter}'] = fl 
-                    #add the moves, fuel, board for each different moves
                     if(temp in boards)==False:
                         boardList.append(temp)
                         movelist.append(move)
@@ -136,7 +134,6 @@ def computeMove(board, fuel, checkerList, unique): #board has the current nodes 
                     tempFuel = copy.deepcopy(fuel)
                     fl = int(tempFuel[f'{i.letter}']-j)
                     tempFuel[f'{i.letter}'] = fl 
-                    #add the moves, fuel, board for each different moves
                     if(temp in boards)==False:
                         boardList.append(temp)
                         movelist.append(move)
@@ -152,7 +149,6 @@ def computeMove(board, fuel, checkerList, unique): #board has the current nodes 
                     tempFuel = copy.deepcopy(fuel)
                     fl = int(tempFuel[f'{i.letter}']-j)
                     tempFuel[f'{i.letter}'] = fl 
-                    #add the moves, fuel, board for each different moves
                     if(temp in boards)==False:
                         boardList.append(temp)
                         movelist.append(move)
@@ -166,14 +162,12 @@ def computeMove(board, fuel, checkerList, unique): #board has the current nodes 
                     tempFuel = copy.deepcopy(fuel)
                     fl = int(tempFuel[f'{i.letter}']-j)
                     tempFuel[f'{i.letter}'] = fl 
-                    #add the moves, fuel, board for each different moves
                     if(temp in boards)==False:
                         boardList.append(temp)
                         movelist.append(move)
                         fuelList.append(tempFuel)
                 else:
                     check=True
-                
 
     #all ritgh possible moves 
     for i in carlist:
@@ -191,7 +185,6 @@ def computeMove(board, fuel, checkerList, unique): #board has the current nodes 
                     tempFuel = copy.deepcopy(fuel)
                     fl = int(tempFuel[f'{i.letter}']-j)
                     tempFuel[f'{i.letter}'] = fl 
-                    #add the moves, fuel, board for each different moves
                     if(temp in boards)==False:
                         boardList.append(temp)
                         movelist.append(move)
@@ -396,20 +389,8 @@ def computeMove(board, fuel, checkerList, unique): #board has the current nodes 
 
     return boardList, fuelList, movelist
 
-def h2(board): # returns the number of alphabets blocking A to the right 
-    score = 0
-    posy= None
-    for i in range(0,6):
-        if (board[2][i]=='A'):
-            posy=i
-    for i in range(0,6):
-        if(i>posy and board[2][i]!='.' and board[2][i]!='A'):
-            score = score + 1
-    return score
-
+#returns the number of vehicles blocking A to the right 
 def h1(board):
-    #returns the number of vehicles blocking A to the right 1,2,3
-    #blocking vehicles, check row 3, how many car elements present in the row to 'A''s right
     score = []
     posy= None
     for i in range(0,6):
@@ -420,9 +401,20 @@ def h1(board):
             score.append(board[2][i])
     return len(set(score))
 
+# returns the number of alphabets blocking A to the right 
+def h2(board): 
+    score = 0
+    posy= None
+    for i in range(0,6):
+        if (board[2][i]=='A'):
+            posy=i
+    for i in range(0,6):
+        if(i>posy and board[2][i]!='.' and board[2][i]!='A'):
+            score = score + 1
+    return score
+
+#returns the number of vehicles blocking A to the right times alpha constant of 5
 def h3(board):
-    #returns the number of vehicles blocking A to the right 1,2,3
-    #blocking vehicles, check row 3, how many car elements present in the row to 'A''s right
     score = []
     posy= None
     for i in range(0,6):
@@ -433,7 +425,8 @@ def h3(board):
             score.append(board[2][i])
     return len(set(score))*5
 
-def h4(board):#combination of how far A is away from [2][5], vehciles blocking a
+#combination of how far A is away from [2][5], plus the vehicles blocking A
+def h4(board):
     veh = []
     posy= None
     for i in range(0,6):
@@ -446,7 +439,8 @@ def h4(board):#combination of how far A is away from [2][5], vehciles blocking a
     posFromEnd = 5-posy
     return len(set(veh))*5 + posFromEnd
 
-def valet(board, unique):
+#function to remove any horizontal car from the exit
+def valetService(board, unique):
     veh = None
     if(board[2][5]!='.' and board[2][4]!='.' and board[2][5]!='A' and board[2][4]!='A'):
         if(board[2][5]==board[2][4]):
@@ -463,12 +457,13 @@ def valet(board, unique):
                 board[2][2] = '.'
     return board
 
+#function to produce the children nodes, as list of node objects
 def nextNode(presentNodeValue, checkerList, unique, heuIndex):
     boards, fuels, moves = computeMove(presentNodeValue.board, presentNodeValue.fuel, checkerList,unique) #get children from presentNodeValue
     newNodes=[]
     # create nodes with the new boards
     for i in range(len(boards)):
-        valetBoard = valet(boards[i], unique)
+        valetBoard = valetService(boards[i], unique)
         if(heuIndex=='1'):
             obj = informedNode.setinfNode(valetBoard, presentNodeValue, moves[i], int(presentNodeValue.level)+1, fuels[i], h1(boards[i])+ int(presentNodeValue.level)+1 )# heu = heu + (g)level 
         elif(heuIndex=='2'):
@@ -482,35 +477,34 @@ def nextNode(presentNodeValue, checkerList, unique, heuIndex):
 
     return newNodes
 
+# Function for A algorithm 
 def aFunc(startBoard, fuel, unique, heuIndex):
     if(heuIndex =='1'):
-        initial = informedNode.setinfNode(valet(startBoard, unique), None, 'None', 0, fuel,h1(startBoard))
+        initial = informedNode.setinfNode(valetService(startBoard, unique), None, 'None', 0, fuel,h1(startBoard))
     elif(heuIndex=='2'):
-        initial = informedNode.setinfNode(valet(startBoard, unique), None, 'None', 0, fuel,h2(startBoard))
+        initial = informedNode.setinfNode(valetService(startBoard, unique), None, 'None', 0, fuel,h2(startBoard))
     elif(heuIndex=='3'):
-        initial = informedNode.setinfNode(valet(startBoard, unique), None, 'None', 0, fuel,h3(startBoard))
+        initial = informedNode.setinfNode(valetService(startBoard, unique), None, 'None', 0, fuel,h3(startBoard))
     elif(heuIndex=='4'):
-        initial = informedNode.setinfNode(valet(startBoard, unique), None, 'None', 0, fuel,h4(startBoard))
-     # initial heuristic is just the heuristic cost, as g =0
-    solpath=[] 
+        initial = informedNode.setinfNode(valetService(startBoard, unique), None, 'None', 0, fuel,h4(startBoard))
+    
+    openList=[] 
     checkerList=[]
     closedList=[]
-    solpath.append(initial) # equivalent to open list, i.e. the next node to expand is from this list
-    checkerList.append(initial) #equivalent to closed list, has all the list that have been visited
-    present = solpath.pop(0) 
+    openList.append(initial) 
+    checkerList.append(initial) 
+    present = openList.pop(0) 
     closedList.append(present)
     while(present.board[2][5] != 'A' ) :
-        ########################################add condition inside computeMoves to break once [2][5]==A
         next_nodes = nextNode(present, checkerList, unique, heuIndex)
         for i in next_nodes:    
-            solpath.append(i)
+            openList.append(i)
             checkerList.append(i)
-        if(len(solpath)==0):
+        if(len(openList)==0):
             break
         else:
-            #pop the smallest heu, therefore keeps the order when heu are same, without mixing 
-            solpath.sort(key=lambda x: x.heu, reverse=False)
-            present = solpath.pop(0)  
+            openList.sort(key=lambda x: x.heu, reverse=False)
+            present = openList.pop(0)  
             closedList.append(present)
     searchMoves = []
     searchPath = []
@@ -522,6 +516,7 @@ def aFunc(startBoard, fuel, unique, heuIndex):
 
     return searchMoves, closedList, searchPath, checkerList
 
+#sub function to return move string
 def parseMove(string):
     if string == 'u':
         return '   up'
@@ -532,12 +527,14 @@ def parseMove(string):
     if string == 'r':
         return 'right'
 
+#function to return move string
 def solMoveString(searchPathMoves):
     solutionPathString=''
     for i in reversed(searchPathMoves):
         solutionPathString = solutionPathString + i[0]+' '+parseMove(i[1])+' '+i[2]+' ; '
     return solutionPathString
 
+#function to pretty print solution moves and path
 def solPathMoves(searchPathMoves,searchPath):
     for i in reversed(range(len(searchPath))):
         print('{}  {}'.format(searchPathMoves[i][0]+' '+parseMove(searchPathMoves[i][1])+' '+searchPathMoves[i][2]+' ',''.join(map(str,[ i for j in searchPath[i] for i in j]))))
@@ -548,6 +545,7 @@ def solPathMoves(searchPathMoves,searchPath):
                 print(final[i][j], end=" ")
         print('')
 
+#function to pretty print solution moves and path to text
 def printSolPathMovesTextFile(searchPathMoves,searchPath, text):
     for i in reversed(range(len(searchPath))):
         text.write('{}  {}'.format(searchPathMoves[i][0]+' '+parseMove(searchPathMoves[i][1])+' '+searchPathMoves[i][2]+' ',''.join(map(str,[ i for j in searchPath[i] for i in j]))))
@@ -562,6 +560,7 @@ def printSolPathMovesTextFile(searchPathMoves,searchPath, text):
                 text.write('')
         text.write('\n')
 
+#function to print search path to text file
 def printSearchPathTextFile(closedList, i,h):
         #search path result, closedList has all the searched paths
     file = './Output/a/search files'
@@ -582,12 +581,14 @@ def printSearchPathTextFile(closedList, i,h):
                 searchTextFile.write('')
         searchTextFile.write('\n')
 
+#function to print details needed for excel analysis
 def printDetailsExcel(solLength, searchLength, exeTIme):
     # each is a list print one by one and add to csv file, manually
     print(*solLength)
     print(*searchLength)
     print(*exeTIme)
 
+#function to run all puzzle from input file
 def runAllPuzzle(h):
     arrayPuzzle = readInput('input') # has all the puzzles
     solExcel = [] 
@@ -653,6 +654,7 @@ def runAllPuzzle(h):
     
     printDetailsExcel(solExcel, searchExcel, exeExcel)
 
+#main
 if __name__ == '__main__':
     optionFlag= False
     while(optionFlag==False):
@@ -660,10 +662,7 @@ if __name__ == '__main__':
         if(runOption=='1'):
             for h in range(1,5):
                 runAllPuzzle(h)
-            runOption=True
-        #elif(runOption=='2'):
-        ##    runChosenPuzzle()
-        #    runOption = True
+            optionFlag=True
         elif(runOption=='2'):
             break
         else:

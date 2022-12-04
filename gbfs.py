@@ -90,9 +90,9 @@ def defCar(board, unique):
 # function to compute all possible moves from a given board
 def computeMove(board, fuel, checkerList, unique): 
     #board has the current nodes board, fuel has the current nodes fuel, checkerList has all the nodes visited
-    boards=[]
+    boards=[] 
     for i in checkerList:
-        boards.append(i.board)
+        boards.append(i.board) #needed to check for repeat node 
     boardList = [] 
     movelist = [] 
     fuelList= [] 
@@ -616,8 +616,7 @@ def runAllPuzzle(h):
             exeExcel.append(stop-start)
             solPathMoves(searchPathMoves, searchPath)
         textFile.close()
-        printSearchPathTextFile(closedList,i, h)
-        
+        printSearchPathTextFile(closedList,i, h)  
     #printDetailsExcel(solExcel, searchExcel, exeExcel)
 
 #main
@@ -628,7 +627,7 @@ if __name__ == '__main__':
         if(runOption=='1'):
             for h in range(1,5):
                 runAllPuzzle(h)
-            runOption=True
+            optionFlag=True
         elif(runOption=='2'):
             break
         else:

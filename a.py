@@ -465,13 +465,13 @@ def nextNode(presentNodeValue, checkerList, unique, heuIndex):
     for i in range(len(boards)):
         valetBoard = valetService(boards[i], unique)
         if(heuIndex=='1'):
-            obj = informedNode.setinfNode(valetBoard, presentNodeValue, moves[i], int(presentNodeValue.level)+1, fuels[i], h1(boards[i])+ int(presentNodeValue.level)+1 )# heu = heu + (g)level 
+            obj = informedNode.setinfNode(valetBoard, presentNodeValue, moves[i], int(presentNodeValue.level)+1, fuels[i], h1(boards[i])+ int(presentNodeValue.level)+1 )# f = heu + (g) 
         elif(heuIndex=='2'):
-            obj = informedNode.setinfNode(valetBoard, presentNodeValue, moves[i], int(presentNodeValue.level)+1, fuels[i], h2(boards[i])+ int(presentNodeValue.level)+1 )# heu = heu + (g)level
+            obj = informedNode.setinfNode(valetBoard, presentNodeValue, moves[i], int(presentNodeValue.level)+1, fuels[i], h2(boards[i])+ int(presentNodeValue.level)+1 )# f = heu + (g)
         elif(heuIndex=='3'):
-            obj = informedNode.setinfNode(valetBoard, presentNodeValue, moves[i], int(presentNodeValue.level)+1, fuels[i], h3(boards[i])+ int(presentNodeValue.level)+1 )# heu = heu + (g)level
+            obj = informedNode.setinfNode(valetBoard, presentNodeValue, moves[i], int(presentNodeValue.level)+1, fuels[i], h3(boards[i])+ int(presentNodeValue.level)+1 )# f = heu + (g)
         elif(heuIndex=='4'):
-            obj = informedNode.setinfNode(valetBoard, presentNodeValue, moves[i], int(presentNodeValue.level)+1, fuels[i], h4(boards[i])+ int(presentNodeValue.level)+1 )# heu = heu + (g)level
+            obj = informedNode.setinfNode(valetBoard, presentNodeValue, moves[i], int(presentNodeValue.level)+1, fuels[i], h4(boards[i])+ int(presentNodeValue.level)+1 )# f = heu + (g)
         
         newNodes.append(obj)
 
@@ -632,7 +632,7 @@ def runAllPuzzle(h):
             textFile.write(str(stop-start))
             textFile.write(' seconds')
             textFile.write('\n')
-            textFile.write('search path length: ' ) # all the states have been assigned  g(n)
+            textFile.write('search path length: ' )
             textFile.write(str(len(allStates)))
             textFile.write(' states')
             textFile.write('\n')

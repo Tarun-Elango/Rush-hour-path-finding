@@ -452,13 +452,13 @@ def nextNode(presentNodeValue, checkerList, unique, heuIndex):
     for i in range(len(boards)):
         valetBoard = valetService(boards[i], unique)
         if(heuIndex=='1'):
-            obj = informedNode.setinfNode(valetBoard, presentNodeValue, moves[i], int(presentNodeValue.level)+1, fuels[i], h1(boards[i]))# heu = heu 
+            obj = informedNode.setinfNode(valetBoard, presentNodeValue, moves[i], int(presentNodeValue.level)+1, fuels[i], h1(boards[i]))# f = heu 
         elif(heuIndex=='2'):
-            obj = informedNode.setinfNode(valetBoard, presentNodeValue, moves[i], int(presentNodeValue.level)+1, fuels[i], h2(boards[i]))# heu = heu 
+            obj = informedNode.setinfNode(valetBoard, presentNodeValue, moves[i], int(presentNodeValue.level)+1, fuels[i], h2(boards[i]))# f = heu 
         elif(heuIndex=='3'):
-            obj = informedNode.setinfNode(valetBoard, presentNodeValue, moves[i], int(presentNodeValue.level)+1, fuels[i], h3(boards[i]))# heu = heu 
+            obj = informedNode.setinfNode(valetBoard, presentNodeValue, moves[i], int(presentNodeValue.level)+1, fuels[i], h3(boards[i]))# f = heu 
         elif(heuIndex=='4'):
-            obj = informedNode.setinfNode(valetBoard, presentNodeValue, moves[i], int(presentNodeValue.level)+1, fuels[i], h4(boards[i]))# heu = heu         
+            obj = informedNode.setinfNode(valetBoard, presentNodeValue, moves[i], int(presentNodeValue.level)+1, fuels[i], h4(boards[i]))# f = heu         
         newNodes.append(obj)
     return newNodes
 
@@ -482,14 +482,14 @@ def gbfs(startBoard, fuel, unique, heuIndex):
     closedList.append(present)
 
     while(present.board[2][5] != 'A' ) :
-        next_nodes = nextNode(present, checkerList, unique, heuIndex)
+        next_nodes = nextNode(present, checkerList, unique, heuIndex) 
         for i in next_nodes:    
-            openList.append(i)
+            openList.append(i) # add all children to open list. any children already present in closed or open list will be ignored by computemoves
             checkerList.append(i)
         if(len(openList)==0):
             break
         else:
-            openList.sort(key=lambda x: x.heu, reverse=False)
+            openList.sort(key=lambda x: x.heu, reverse=False) 
             present = openList.pop(0)  
             closedList.append(present)
     searchMoves = []

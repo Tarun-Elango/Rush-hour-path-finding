@@ -4,8 +4,6 @@ import copy
 import time
 import json
 import os.path
-import csv
-import pandas as pd
 
 # read input file and store data into data structure
 def readInput(input):# has arrays of puzzle
@@ -540,7 +538,6 @@ def printDetailsExcel(solLength, searchLength, exeTIme):
     print(*searchLength)
     print(*exeTIme)
 
-
 # runs all the puzzle from input.txt
 def runAllPuzzle(): # will not disply on terminal, output in the text files
     arrayPuzzle = readInput('input') # has all the puzzles
@@ -564,13 +561,13 @@ def runAllPuzzle(): # will not disply on terminal, output in the text files
             while(check<=len(remaining)/2):
                 fuel[remaining[check]]=int(remaining[check+1])
                 check = check+2
-        #print(f'initial puzzle is {arrayPuzzle[int(i)-1]}')
+        print(f'initial puzzle is {arrayPuzzle[int(i)-1]}')
         textFile.write(f'initial puzzle is {arrayPuzzle[int(i)-1]}')
         textFile.write('\n\n')
-        #printPuzzle(arrayPuzzle[int(i)-1][0:36])
+        printPuzzle(arrayPuzzle[int(i)-1][0:36])
         printPuzzleTextFile(arrayPuzzle[int(i)-1][0:36], textFile)
         textFile.write('\n\n')
-        #print('car fuel available ',fuel)
+        print('car fuel available ',fuel)
         textFile.write('car fuel available: ')
         textFile.write(json.dumps(fuel))
         textFile.write('\n')
@@ -599,17 +596,17 @@ def runAllPuzzle(): # will not disply on terminal, output in the text files
             textFile.write('solution path: ')
             textFile.write(solMoveString(searchPathMoves))
             textFile.write('\n')
-            textFile.write('\n\n')
+            textFile.write('\n\n')            
             printSolPathMovesTextFile(searchPathMoves, searchPath, textFile)
             solExcel.append(len(searchPathMoves))
             searchExcel.append(len(allStates))
             exeExcel.append(stop-start)
-            #solPathMoves(searchPathMoves, searchPath)
+            solPathMoves(searchPathMoves, searchPath)
         textFile.close()
         printSearchPathTextFile(closedList,i)
         
     
-    printDetailsExcel(solExcel, searchExcel, exeExcel)
+    #printDetailsExcel(solExcel, searchExcel, exeExcel)
 
 #runs the user chosen puzzle form input.txt
 def runChosenPuzzle(): #output will be displayed on the terminals

@@ -14,16 +14,15 @@ def readInput(input):
     f = open(path,"r")
     for i in f.read().splitlines():
             valuesArray.append(i)
-
     newArray=[]
     for j in range(len(valuesArray)):
         if(valuesArray[j]=='' or valuesArray[j].startswith('#')):
             continue
         else:
             newArray.append(valuesArray[j])
-
     return newArray
 
+#function to print puzzle on console
 def printPuzzle(array):
     for i in range(0,len(array)):
         if(i%6==5):
@@ -31,6 +30,7 @@ def printPuzzle(array):
         else:
             print(array[i], end =" "),
 
+#function to print puzzle to text file
 def printPuzzleTextFile(array, text):
         for i in range(0,len(array)):
             if(i%6==5):
@@ -52,9 +52,9 @@ def boardMatrix(input):
         if (q % 6 == 5):
             i = i + 1
             j=0
-
     return board
 
+# find the orientation of a vechicle in the board
 def orientation(board,i):
     lt =[]
     for k in range(6):
@@ -62,7 +62,6 @@ def orientation(board,i):
             if (board[k][j] == f'{i}'):
                 lt.append(k)
                 lt.append(j)
-
     if (lt[0] != lt[2]):
         return 'vertical'
     else:
@@ -88,8 +87,10 @@ def defCar(board, unique):
         cars.append(obj)
     return cars # set of car objects
 
-def computeMove(board, fuel, checkerList, unique): #board has the current nodes board, fuel has the current nodes fuel, checkerList has all the nodes visited
-    boards=[]#contains all the boards that have already been passed
+# function to compute all possible moves from a given board
+def computeMove(board, fuel, checkerList, unique): 
+    #board has the current nodes board, fuel has the current nodes fuel, checkerList has all the nodes visited
+    boards=[]
     for i in checkerList:
         boards.append(i.board)
     boardList = [] 
@@ -97,9 +98,6 @@ def computeMove(board, fuel, checkerList, unique): #board has the current nodes 
     fuelList= [] 
     carlist = defCar(board, unique) #this list has all the cars for the given board
 
-    # give the board, get the car
-    #consider boards visited, fuel
-    #length 2
     #all left possible moves 
     for i in carlist:
         if( fuel[f'{i.letter}'] >0  and i.orientation=='horizontal'):
@@ -117,7 +115,6 @@ def computeMove(board, fuel, checkerList, unique): #board has the current nodes 
                     tempFuel = copy.deepcopy(fuel)
                     fl = int(tempFuel[f'{i.letter}']-j)
                     tempFuel[f'{i.letter}'] = fl 
-                    #add the moves, fuel, board for each different moves
                     if(temp in boards)==False:
                         boardList.append(temp)
                         movelist.append(move)
@@ -136,7 +133,6 @@ def computeMove(board, fuel, checkerList, unique): #board has the current nodes 
                     tempFuel = copy.deepcopy(fuel)
                     fl = int(tempFuel[f'{i.letter}']-j)
                     tempFuel[f'{i.letter}'] = fl 
-                    #add the moves, fuel, board for each different moves
                     if(temp in boards)==False:
                         boardList.append(temp)
                         movelist.append(move)
@@ -152,7 +148,6 @@ def computeMove(board, fuel, checkerList, unique): #board has the current nodes 
                     tempFuel = copy.deepcopy(fuel)
                     fl = int(tempFuel[f'{i.letter}']-j)
                     tempFuel[f'{i.letter}'] = fl 
-                    #add the moves, fuel, board for each different moves
                     if(temp in boards)==False:
                         boardList.append(temp)
                         movelist.append(move)
@@ -166,7 +161,6 @@ def computeMove(board, fuel, checkerList, unique): #board has the current nodes 
                     tempFuel = copy.deepcopy(fuel)
                     fl = int(tempFuel[f'{i.letter}']-j)
                     tempFuel[f'{i.letter}'] = fl 
-                    #add the moves, fuel, board for each different moves
                     if(temp in boards)==False:
                         boardList.append(temp)
                         movelist.append(move)
@@ -174,7 +168,6 @@ def computeMove(board, fuel, checkerList, unique): #board has the current nodes 
                 else:
                     check=True
                 
-
     #all ritgh possible moves 
     for i in carlist:
         if(fuel[f'{i.letter}'] >0  and i.orientation=='horizontal'):
@@ -191,7 +184,6 @@ def computeMove(board, fuel, checkerList, unique): #board has the current nodes 
                     tempFuel = copy.deepcopy(fuel)
                     fl = int(tempFuel[f'{i.letter}']-j)
                     tempFuel[f'{i.letter}'] = fl 
-                    #add the moves, fuel, board for each different moves
                     if(temp in boards)==False:
                         boardList.append(temp)
                         movelist.append(move)
@@ -210,7 +202,6 @@ def computeMove(board, fuel, checkerList, unique): #board has the current nodes 
                     tempFuel = copy.deepcopy(fuel)
                     fl = int(tempFuel[f'{i.letter}']-j)
                     tempFuel[f'{i.letter}'] = fl 
-                    #add the moves, fuel, board for each different moves
                     if(temp in boards)==False:
                         boardList.append(temp)
                         movelist.append(move)
@@ -226,7 +217,6 @@ def computeMove(board, fuel, checkerList, unique): #board has the current nodes 
                     tempFuel = copy.deepcopy(fuel)
                     fl = int(tempFuel[f'{i.letter}']-j)
                     tempFuel[f'{i.letter}'] = fl 
-                    #add the moves, fuel, board for each different moves
                     if(temp in boards)==False:
                         boardList.append(temp)
                         movelist.append(move)
@@ -240,7 +230,6 @@ def computeMove(board, fuel, checkerList, unique): #board has the current nodes 
                     tempFuel = copy.deepcopy(fuel)
                     fl = int(tempFuel[f'{i.letter}']-j)
                     tempFuel[f'{i.letter}'] = fl 
-                    #add the moves, fuel, board for each different moves
                     if(temp in boards)==False:
                         boardList.append(temp)
                         movelist.append(move)
@@ -264,7 +253,6 @@ def computeMove(board, fuel, checkerList, unique): #board has the current nodes 
                     tempFuel = copy.deepcopy(fuel)
                     fl = int(tempFuel[f'{i.letter}']-j)
                     tempFuel[f'{i.letter}'] = fl 
-                    #add the moves, fuel, board for each different moves
                     if(temp in boards)==False:
                         boardList.append(temp)
                         movelist.append(move)
@@ -283,7 +271,6 @@ def computeMove(board, fuel, checkerList, unique): #board has the current nodes 
                     tempFuel = copy.deepcopy(fuel)
                     fl = int(tempFuel[f'{i.letter}']-j)
                     tempFuel[f'{i.letter}'] = fl 
-                    #add the moves, fuel, board for each different moves
                     if(temp in boards)==False:
                         boardList.append(temp)
                         movelist.append(move)
@@ -299,7 +286,6 @@ def computeMove(board, fuel, checkerList, unique): #board has the current nodes 
                     tempFuel = copy.deepcopy(fuel)
                     fl = int(tempFuel[f'{i.letter}']-j)
                     tempFuel[f'{i.letter}'] = fl 
-                    #add the moves, fuel, board for each different moves
                     if(temp in boards)==False:
                         boardList.append(temp)
                         movelist.append(move)
@@ -313,7 +299,6 @@ def computeMove(board, fuel, checkerList, unique): #board has the current nodes 
                     tempFuel = copy.deepcopy(fuel)
                     fl = int(tempFuel[f'{i.letter}']-j)
                     tempFuel[f'{i.letter}'] = fl 
-                    #add the moves, fuel, board for each different moves
                     if(temp in boards)==False:
                         boardList.append(temp)
                         movelist.append(move)
@@ -337,7 +322,6 @@ def computeMove(board, fuel, checkerList, unique): #board has the current nodes 
                     tempFuel = copy.deepcopy(fuel)
                     fl = int(tempFuel[f'{i.letter}']-j)
                     tempFuel[f'{i.letter}'] = fl 
-                    #add the moves, fuel, board for each different moves
                     if(temp in boards)==False:
                         boardList.append(temp)
                         movelist.append(move)
@@ -356,7 +340,6 @@ def computeMove(board, fuel, checkerList, unique): #board has the current nodes 
                     tempFuel = copy.deepcopy(fuel)
                     fl = int(tempFuel[f'{i.letter}']-j)
                     tempFuel[f'{i.letter}'] = fl 
-                    #add the moves, fuel, board for each different moves
                     if(temp in boards)==False:
                         boardList.append(temp)
                         movelist.append(move)
@@ -372,7 +355,6 @@ def computeMove(board, fuel, checkerList, unique): #board has the current nodes 
                     tempFuel = copy.deepcopy(fuel)
                     fl = int(tempFuel[f'{i.letter}']-j)
                     tempFuel[f'{i.letter}'] = fl 
-                    #add the moves, fuel, board for each different moves
                     if(temp in boards)==False:
                         boardList.append(temp)
                         movelist.append(move)
@@ -386,19 +368,16 @@ def computeMove(board, fuel, checkerList, unique): #board has the current nodes 
                     tempFuel = copy.deepcopy(fuel)
                     fl = int(tempFuel[f'{i.letter}']-j)
                     tempFuel[f'{i.letter}'] = fl 
-                    #add the moves, fuel, board for each different moves
                     if(temp in boards)==False:
                         boardList.append(temp)
                         movelist.append(move)
                         fuelList.append(tempFuel) 
                 else:
                     check=True
-
     return boardList, fuelList, movelist
 
+#returns the number of vehicles blocking A to the right 
 def h1(board):
-    #returns the number of vehicles blocking A to the right 1,2,3
-    #blocking vehicles, check row 3, how many car elements present in the row to 'A''s right
     score = []
     posy= None
     for i in range(0,6):
@@ -409,7 +388,8 @@ def h1(board):
             score.append(board[2][i])
     return len(set(score))
 
-def h2(board): # returns the number of alphabets blocking A to the right 
+# returns the number of alphabets blocking A to the right 
+def h2(board): 
     score = 0
     posy= None
     for i in range(0,6):
@@ -420,9 +400,8 @@ def h2(board): # returns the number of alphabets blocking A to the right
             score = score + 1
     return score
 
+#returns the number of vehicles blocking A to the right times alpha constant of 5
 def h3(board):
-    #returns the number of vehicles blocking A to the right 1,2,3
-    #blocking vehicles, check row 3, how many car elements present in the row to 'A''s right
     score = []
     posy= None
     for i in range(0,6):
@@ -433,7 +412,8 @@ def h3(board):
             score.append(board[2][i])
     return len(set(score))*5
 
-def h4(board):#combination of how far A is away from [2][5], vehciles blocking a
+#combination of how far A is away from [2][5], and vehciles blocking A
+def h4(board):
     veh = []
     posy= None
     for i in range(0,6):
@@ -446,7 +426,8 @@ def h4(board):#combination of how far A is away from [2][5], vehciles blocking a
     posFromEnd = 5-posy
     return len(set(veh))*5 + posFromEnd
 
-def valet(board, unique):
+#valet service to remove horizontal cars from exit if any
+def valetService(board, unique):
     veh = None
     if(board[2][5]!='.' and board[2][4]!='.' and board[2][5]!='A' and board[2][4]!='A'):
         if(board[2][5]==board[2][4]):
@@ -463,13 +444,13 @@ def valet(board, unique):
                 board[2][2] = '.'
     return board
 
+#function return the childer node objects as a list
 def nextNode(presentNodeValue, checkerList, unique, heuIndex):
     boards, fuels, moves = computeMove(presentNodeValue.board, presentNodeValue.fuel, checkerList, unique)
     newNodes=[]
     # create nodes with the new boards
     for i in range(len(boards)):
-        # condition to check if board already visited 
-        valetBoard = valet(boards[i], unique)
+        valetBoard = valetService(boards[i], unique)
         if(heuIndex=='1'):
             obj = informedNode.setinfNode(valetBoard, presentNodeValue, moves[i], int(presentNodeValue.level)+1, fuels[i], h1(boards[i]))# heu = heu 
         elif(heuIndex=='2'):
@@ -479,33 +460,32 @@ def nextNode(presentNodeValue, checkerList, unique, heuIndex):
         elif(heuIndex=='4'):
             obj = informedNode.setinfNode(valetBoard, presentNodeValue, moves[i], int(presentNodeValue.level)+1, fuels[i], h4(boards[i]))# heu = heu         
         newNodes.append(obj)
-
     return newNodes
 
+#greedy best first search
 def gbfs(startBoard, fuel, unique, heuIndex): 
     if(heuIndex =='1'):
-        initial = informedNode.setinfNode(valet(startBoard, unique), None, 'None', 0, fuel, h1(startBoard))
+        initial = informedNode.setinfNode(valetService(startBoard, unique), None, 'None', 0, fuel, h1(startBoard))
     elif(heuIndex=='2'):
-        initial = informedNode.setinfNode(valet(startBoard, unique), None, 'None', 0, fuel, h2(startBoard))
+        initial = informedNode.setinfNode(valetService(startBoard, unique), None, 'None', 0, fuel, h2(startBoard))
     elif(heuIndex=='3'):
-        initial = informedNode.setinfNode(valet(startBoard, unique), None, 'None', 0, fuel, h3(startBoard))
+        initial = informedNode.setinfNode(valetService(startBoard, unique), None, 'None', 0, fuel, h3(startBoard))
     elif(heuIndex=='4'):
-        initial = informedNode.setinfNode(valet(startBoard, unique), None, 'None', 0, fuel, h4(startBoard))
-    openList=[] 
+        initial = informedNode.setinfNode(valetService(startBoard, unique), None, 'None', 0, fuel, h4(startBoard))
+    openList=[] #open list
     checkerList=[]
-    closedList=[]
+    closedList=[]# close list
 
     openList.append(initial)
     checkerList.append(initial)
     present = openList.pop(0) 
     closedList.append(present)
+
     while(present.board[2][5] != 'A' ) :
         next_nodes = nextNode(present, checkerList, unique, heuIndex)
         for i in next_nodes:    
-            # do the check here
             openList.append(i)
             checkerList.append(i)
-
         if(len(openList)==0):
             break
         else:
@@ -514,14 +494,13 @@ def gbfs(startBoard, fuel, unique, heuIndex):
             closedList.append(present)
     searchMoves = []
     searchPath = []
-
     while(present.previous!=None):
         searchMoves.append(present.move)
         searchPath.append(present.board)
         present = present.previous
-
     return searchMoves, closedList, searchPath, checkerList
 
+#sub function to print moves
 def parseMove(string):
     if string == 'u':
         return '   up'
@@ -532,12 +511,14 @@ def parseMove(string):
     if string == 'r':
         return 'right'
 
+#function to return move string
 def solMoveString(searchPathMoves):
     solutionPathString=''
     for i in reversed(searchPathMoves):
         solutionPathString = solutionPathString + i[0]+' '+parseMove(i[1])+' '+i[2]+' ; '
     return solutionPathString
 
+#Function to pretty print solution path and moves
 def solPathMoves(searchPathMoves,searchPath):
     for i in reversed(range(len(searchPath))):
         print('{}  {}'.format(searchPathMoves[i][0]+' '+parseMove(searchPathMoves[i][1])+' '+searchPathMoves[i][2]+' ',''.join(map(str,[ i for j in searchPath[i] for i in j]))))
@@ -563,8 +544,8 @@ def printSolPathMovesTextFile(searchPathMoves,searchPath, text):
                 text.write('')
         text.write('\n')
 
-def printSearchPathTextFile(closedList, i,h):
-        #search path result, closedList has all the searched paths
+#print search path to text
+def printSearchPathTextFile(closedList, i, h):
     file = './Output/gbfs/search files'
     fileName = f"gbfs-h{h}-search-{i}.txt"
     pathName = os.path.join(file, fileName)
@@ -573,7 +554,7 @@ def printSearchPathTextFile(closedList, i,h):
     for p in closedList:
         searchTextFile.write(str(p.heu))
         searchTextFile.write(' ')
-        searchTextFile.write(0)
+        searchTextFile.write(str(0))
         searchTextFile.write(' ')
         searchTextFile.write(str(p.heu))
         searchTextFile.write(' ')
@@ -583,58 +564,14 @@ def printSearchPathTextFile(closedList, i,h):
                 searchTextFile.write('')
         searchTextFile.write('\n')
 
-def runChosenPuzzle():
-    arrayPuzzle = readInput('input')
-    size = len(arrayPuzzle)
-
-    print('number of puzzles ',size)
-    check = False
-    while(check==False):
-        puzzleNumber = input(f'choose puzzle number between 1 and {size} :')
-        if (int(puzzleNumber) > int(size) or int(puzzleNumber) < 1):
-            print('wrong input')
-        else:
-            check=True
-    unique= sorted(set(arrayPuzzle[int(puzzleNumber)-1][0:36]))
-    if '.' in unique: unique.remove('.')
-    fuel={}
-    for j in range(len(unique)):
-        fuel[unique[j]]=100
-
-    remaining = arrayPuzzle[int(puzzleNumber)-1][36:len(arrayPuzzle[int(puzzleNumber)-1])].replace(' ','')
-    #print((remaining))
-    if(len(arrayPuzzle[int(puzzleNumber)-1])>36):  #integer value should be until the end of file, or before another english.(we remove space)
-        check= 0
-        while(check<=len(remaining)/2):
-            fuel[remaining[check]]=int(remaining[check+1])
-            check = check+2
-    print(f'initial puzzle is {arrayPuzzle[int(puzzleNumber)-1]}')
-    printPuzzle(arrayPuzzle[int(puzzleNumber)-1][0:36])
-    print('car fuel available ',fuel)
-    start = time.time()
-    # following has the board
-    board = boardMatrix(arrayPuzzle[int(puzzleNumber)-1][0:36])
-    heuChoice = input('enter 1,2,3,4 for the respective heuristic function: ')
-    if(int(heuChoice)>4 or int(heuChoice)<1):
-        print('invalid choice, default Heuristic 1 will be chosen')
-        heuChoice = '1'
-    searchPathMoves, closedList, searchPath, allStates = gbfs(board, fuel, unique, heuChoice)
-    stop = time.time()
-    if(searchPath[0][2][5]!='A'):
-        print('no solution')
-    else:
-        print('solution path ', solMoveString(searchPathMoves))
-        print('execution time ',stop-start,' seconds')
-        print('search path length',len(allStates), ' states')
-        print('solution path length', len(searchPathMoves), ' moves')
-        solPathMoves(searchPathMoves, searchPath)
-
+#function to return details needed for excel file analysis
 def printDetailsExcel(solLength, searchLength, exeTIme):
     # each is a list print one by one and add to csv file, manually
     print(*solLength)
     print(*searchLength)
     print(*exeTIme)
 
+#function to run all puzzles in input file with all the 4 heursitics
 def runAllPuzzle(h):
     arrayPuzzle = readInput('input') # has all the puzzles
     solExcel = [] 
@@ -651,7 +588,6 @@ def runAllPuzzle(h):
         for j in range(len(unique)):
             fuel[unique[j]]=100
         remaining = arrayPuzzle[int(i)-1][36:len(arrayPuzzle[int(i)-1])].replace(' ','')
-        #print((remaining))s
         if(len(arrayPuzzle[int(i)-1])>36):  #integer value should be until the end of file, or before another english.(we remove space)
             check= 0
             while(check<=len(remaining)/2):
@@ -661,7 +597,7 @@ def runAllPuzzle(h):
         textFile.write('\n\n')
         printPuzzleTextFile(arrayPuzzle[int(i)-1][0:36], textFile)
         textFile.write('\n\n')
-        #print('car fuel available ',fuel)
+        print('car fuel available ',fuel)
         textFile.write('car fuel available: ')
         textFile.write(json.dumps(fuel))
         textFile.write('\n')
@@ -675,32 +611,16 @@ def runAllPuzzle(h):
             searchExcel.append('NA')
             exeExcel.append('NA')
         else:
-            textFile.write('execution time : ')
-            textFile.write(str(stop-start))
-            textFile.write(' seconds')
-            textFile.write('\n')
-            textFile.write('search path length: ' ) # all the states have been assigned  g(n)
-            textFile.write(str(len(allStates)))
-            textFile.write(' states')
-            textFile.write('\n')
-            textFile.write('solution path length: ')
-            textFile.write(str(len(searchPathMoves)))
-            textFile.write(' moves')
-            textFile.write('\n')
-            textFile.write('solution path: ')
-            textFile.write(solMoveString(searchPathMoves))
-            textFile.write('\n\n')
-            printSolPathMovesTextFile(searchPathMoves, searchPath, textFile)
             solExcel.append(len(searchPathMoves))
             searchExcel.append(len(allStates))
             exeExcel.append(stop-start)
-            #solPathMoves(searchPathMoves, searchPath)
+            solPathMoves(searchPathMoves, searchPath)
         textFile.close()
         printSearchPathTextFile(closedList,i, h)
         
-    
-    printDetailsExcel(solExcel, searchExcel, exeExcel)
+    #printDetailsExcel(solExcel, searchExcel, exeExcel)
 
+#main
 if __name__ == '__main__':
     optionFlag= False
     while(optionFlag==False):
@@ -709,9 +629,6 @@ if __name__ == '__main__':
             for h in range(1,5):
                 runAllPuzzle(h)
             runOption=True
-        #elif(runOption=='2'):
-        ##    runChosenPuzzle()
-        #    runOption = True
         elif(runOption=='2'):
             break
         else:

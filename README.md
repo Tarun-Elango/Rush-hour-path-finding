@@ -1,7 +1,4 @@
-https://github.com/Tarun-Elango/COMP-472-Mini-Project-2
-
-# COMP-472-Mini-Project-2
-
+=
 Instructions to run 
 
 download all dependencies to local machine using pip or any package manager.
@@ -13,10 +10,6 @@ hence recommended to use pycharm and run program using pycharms terminal, with a
 3. configure the correct python intrepter 
 4. open terminal , view-> tool windows-> terminal
 5. to run use the command python {python filename}.py or just {python filename}.py
-
-To run an algorithm <br />
-cd into 472-Code-40084007 <br />
-cd into Code <br />
 
 Run ucs.py or gbfs.py or a.py to run the respective algorithms </br >
 
